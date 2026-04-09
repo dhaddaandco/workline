@@ -638,6 +638,29 @@ function toast(msg, isErr=false){
   t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000);
 }
 
+  <script>
+const SUPABASE_URL  = 'https://mgkucaagzcllxnecirbi.supabase.co';
+const SUPABASE_ANON = 'PASTE_YOUR_ANON_OR_PUBLISHABLE_KEY';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// Quick connectivity + auth config check
+(async function testSupabaseConnection() {
+  try {
+    const { data, error } = await sb.auth.getSession();
+    if (error) {
+      console.error('Supabase reachable, but auth error:', error.message);
+      document.getElementById('loginErr').textContent = `Auth config issue: ${error.message}`;
+      return;
+    }
+    console.log('Supabase connection OK', data);
+  } catch (e) {
+    console.error('Network/URL issue:', e);
+    document.getElementById('loginErr').textContent =
+      'Cannot reach Supabase. Check SUPABASE_URL / internet / firewall.';
+  }
+})();
+</script>
 // ── Auto-login on page load ───────────────
 sb.auth.getSession().then(({data:{session}})=>{
   if(session) initApp(session.user);
