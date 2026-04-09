@@ -1,670 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Billing Management System</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-/* ── Reset & Base ── */
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;color:#222;font-size:13px;min-height:100vh}
-
-/* ── Login Page ── */
-#loginPage{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#1a2a4a 0%,#2563a8 100%)}
-.login-box{background:#fff;border-radius:14px;padding:40px 36px;width:360px;box-shadow:0 8px 32px rgba(0,0,0,0.18)}
-.login-box h1{font-size:22px;font-weight:700;color:#1a2a4a;margin-bottom:4px}
-.login-box p{font-size:12px;color:#888;margin-bottom:24px}
-.login-box input{width:100%;height:40px;border:1.5px solid #ddd;border-radius:8px;padding:0 13px;font-size:13px;margin-bottom:12px;outline:none;transition:border .2s}
-.login-box input:focus{border-color:#2563a8}
-.login-box button{width:100%;height:40px;background:#2563a8;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s}
-.login-box button:hover{background:#1a4a8a}
-.login-err{color:#c0392b;font-size:12px;margin-top:8px;min-height:16px;text-align:center}
-
-/* ── App Shell ── */
-#appPage{display:none;flex-direction:column;min-height:100vh}
-.topnav{background:#1a2a4a;color:#fff;padding:0 20px;display:flex;align-items:center;gap:16px;height:52px;flex-shrink:0}
-.topnav .brand{font-size:16px;font-weight:700;letter-spacing:.5px;flex:1}
-.topnav .user-info{font-size:12px;color:#aac4ff;display:flex;align-items:center;gap:10px}
-.role-badge{padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700}
-.rb-member{background:#2563a8;color:#fff}
-.rb-admin{background:#d4a017;color:#1a2a4a}
-.rb-partner{background:#1e8a4a;color:#fff}
-.nav-btn{height:30px;padding:0 14px;font-size:12px;border:1px solid rgba(255,255,255,0.25);border-radius:6px;background:transparent;color:#fff;cursor:pointer}
-.nav-btn:hover{background:rgba(255,255,255,0.1)}
-.nav-btn.active{background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,.5)}
-
-/* ── Tab content ── */
-.tab-content{flex:1;padding:18px 20px;overflow:auto}
-.tab-pane{display:none}
-.tab-pane.active{display:block}
-
-/* ── Toolbar row ── */
-.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
-.toolbar input[type=text],.toolbar select{height:34px;font-size:12px;padding:0 10px;border:1px solid #ccc;border-radius:7px;background:#fff;outline:none}
-.toolbar input[type=text]{flex:1;min-width:140px}
-.btn{height:34px;padding:0 14px;font-size:12px;border:1px solid #ccc;border-radius:7px;background:#fff;cursor:pointer;white-space:nowrap;font-weight:500}
-.btn:hover{background:#f0f0f0}
-.btn.primary{background:#2563a8;color:#fff;border-color:#2563a8}
-.btn.primary:hover{background:#1a4a8a}
-.btn.success{background:#EAF3DE;color:#2d6a0a;border-color:#97C459}
-.btn.warning{background:#fff8e1;color:#7a5c00;border-color:#f0c040}
-.btn.danger{background:#FCEBEB;color:#a32d2d;border-color:#f09595}
-
-/* ── Edit mode bar ── */
-.edit-bar{display:flex;align-items:center;gap:10px;background:#EAF3DE;border:1px solid #97C459;border-radius:8px;padding:8px 14px;margin-bottom:12px;flex-wrap:wrap}
-.edit-bar-msg{font-size:12px;color:#2d6a0a;font-weight:600;flex:1}
-.unsaved-dot{width:8px;height:8px;border-radius:50%;background:#e24b4a;display:inline-block;margin-right:5px;vertical-align:middle}
-
-/* ── Table ── */
-.tbl-card{background:#fff;border-radius:10px;border:1px solid #ddd;overflow:hidden}
-.tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:12px}
-thead tr{background:#f4f6fa;position:sticky;top:0;z-index:3}
-th{padding:9px 8px;text-align:left;font-weight:600;font-size:11px;color:#555;border-bottom:1.5px solid #ddd;white-space:nowrap;cursor:pointer;user-select:none}
-th:hover{color:#2563a8}
-td{padding:7px 8px;border-bottom:1px solid #f0f0f0;color:#333;white-space:nowrap;vertical-align:middle;max-width:160px;overflow:hidden;text-overflow:ellipsis}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#f8faff}
-td.editable:hover{background:#e8f4ff !important;outline:1.5px dashed #2563a8;cursor:pointer}
-td input.ci,td select.cs{width:100%;height:26px;font-size:12px;padding:0 6px;border:1.5px solid #2563a8;border-radius:4px;outline:none;background:#fff}
-td select.cs{min-width:100px}
-.del-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:14px;padding:0 3px;line-height:1}
-.del-btn:hover{color:#a32d2d}
-
-/* ── Badges ── */
-.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
-.b-green{background:#EAF3DE;color:#2d6a0a}
-.b-amber{background:#fff8e1;color:#7a5c00}
-.b-red{background:#FCEBEB;color:#a32d2d}
-.b-gray{background:#f0f0f0;color:#666}
-.b-blue{background:#e6f1fb;color:#185fa5}
-
-/* ── Footer ── */
-.tbl-footer{padding:8px 14px;display:flex;justify-content:space-between;font-size:12px;color:#777;border-top:1px solid #eee;background:#fafafa}
-
-/* ── Audit log ── */
-.audit-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.audit-filters select,.audit-filters input{height:32px;font-size:12px;padding:0 9px;border:1px solid #ccc;border-radius:6px;background:#fff;outline:none}
-.audit-table th{cursor:default}
-.audit-table td{max-width:200px}
-.action-badge{display:inline-block;padding:1px 8px;border-radius:4px;font-size:11px;font-weight:700}
-.ab-insert{background:#e6f1fb;color:#185fa5}
-.ab-update{background:#fff8e1;color:#7a5c00}
-.ab-delete{background:#FCEBEB;color:#a32d2d}
-
-/* ── Team selector (admin/partner) ── */
-.team-pill{padding:4px 12px;border-radius:20px;font-size:12px;border:1px solid #ccc;background:#fff;cursor:pointer}
-.team-pill.active{background:#2563a8;color:#fff;border-color:#2563a8}
-
-/* ── Toast ── */
-.toast{position:fixed;bottom:24px;right:24px;background:#1a2a4a;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
-.toast.show{opacity:1}
-
-/* ── Loading ── */
-.loading{text-align:center;padding:40px;color:#888;font-size:14px}
-.spinner{display:inline-block;width:20px;height:20px;border:2px solid #ddd;border-top-color:#2563a8;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── Stats row (admin/partner) ── */
-.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
-.stat-card{background:#fff;border-radius:10px;border:1px solid #ddd;padding:14px 16px}
-.stat-card .label{font-size:11px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
-.stat-card .value{font-size:22px;font-weight:700;color:#1a2a4a}
-.stat-card .sub{font-size:11px;color:#aaa;margin-top:2px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            overflow-x: auto;
+            display: block;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+            font-size: 14px;
+        }
+        th {
+            background-color: #f4f4f4;
+            position: sticky;
+            top: 0;
+        }
+    </style>
 </head>
 <body>
 
-<!-- ══════════════ LOGIN PAGE ══════════════ -->
-<div id="loginPage">
-  <div class="login-box">
-    <h1>Billing System</h1>
-    <p>Sign in with your team credentials</p>
-    <input type="email" id="loginEmail" placeholder="Email address"/>
-    <input type="password" id="loginPass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <button onclick="doLogin()">Sign In</button>
-    <div class="login-err" id="loginErr"></div>
-  </div>
-</div>
+<h2>Billing Details</h2>
 
-<!-- ══════════════ APP PAGE ══════════════ -->
-<div id="appPage" style="display:none;flex-direction:column;min-height:100vh">
-  <nav class="topnav">
-    <div class="brand">Billing Management</div>
-    <button class="nav-btn active" id="tabBillingBtn" onclick="switchTab('billing')">Table</button>
-    <button class="nav-btn" id="tabAuditBtn" onclick="switchTab('audit')">Audit Log</button>
-    <div class="user-info">
-      <span id="navUserName">—</span>
-      <span class="role-badge rb-member" id="navRoleBadge">member</span>
-      <button class="nav-btn" onclick="doLogout()">Logout</button>
-    </div>
-  </nav>
+<table>
+    <thead>
+        <tr>
+            <th>Cost Center</th>
+            <th>Person Authorised</th>
+            <th>Voucher Type</th>
+            <th>Income Head</th>
+            <th>Group</th>
+            <th>Client</th>
+            <th>State</th>
+            <th>GSTIN</th>
+            <th>POC Name</th>
+            <th>POC Mobile</th>
+            <th>POC Email</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>CGST</th>
+            <th>SGST</th>
+            <th>IGST</th>
+            <th>Total</th>
+            <th>Billing Status</th>
+            <th>Memo No.</th>
+            <th>Memo Date</th>
+            <th>Invoice No.</th>
+            <th>Invoice Date</th>
+            <th>Receiving Status</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>CC001</td>
+            <td>John Doe</td>
+            <td>Sales</td>
+            <td>Consulting</td>
+            <td>A</td>
+            <td>ABC Pvt Ltd</td>
+            <td>Rajasthan</td>
+            <td>08ABCDE1234F1Z5</td>
+            <td>Rahul</td>
+            <td>9876543210</td>
+            <td>rahul@example.com</td>
+            <td>Service Charges</td>
+            <td>10000</td>
+            <td>900</td>
+            <td>900</td>
+            <td>0</td>
+            <td>11800</td>
+            <td>Pending</td>
+            <td>M001</td>
+            <td>01-04-2026</td>
+            <td>INV001</td>
+            <td>02-04-2026</td>
+            <td>Received</td>
+            <td>-</td>
+        </tr>
+    </tbody>
+</table>
 
-  <div class="tab-content">
-
-    <!-- ── BILLING TAB ── -->
-    <div class="tab-pane active" id="tabBilling">
-
-      <!-- Stats (admin/partner only) -->
-      <div class="stats-row" id="statsRow" style="display:none">
-        <div class="stat-card"><div class="label">Total entries</div><div class="value" id="statEntries">—</div></div>
-        <div class="stat-card"><div class="label">Grand total</div><div class="value" id="statTotal">—</div></div>
-        <div class="stat-card"><div class="label">Teams active</div><div class="value" id="statTeams">—</div></div>
-        <div class="stat-card"><div class="label">Pending amount</div><div class="value" id="statPending">—</div></div>
-      </div>
-
-      <!-- Team filter pills (admin/partner only) -->
-      <div id="teamPillsRow" style="display:none;margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <span style="font-size:12px;color:#888;font-weight:600">Filter by team:</span>
-        <span class="team-pill active" data-tid="all" onclick="selectTeamPill(this)">All teams</span>
-      </div>
-
-      <!-- Edit bar -->
-      <div class="edit-bar" id="editBar" style="display:none">
-        <span class="edit-bar-msg">
-          <span class="unsaved-dot" id="unsavedDot" style="display:none"></span>
-          Edit mode active — click any cell to edit
-        </span>
-        <button class="btn success" onclick="saveChanges()">Save changes</button>
-        <button class="btn warning" onclick="discardChanges()">Discard</button>
-        <button class="btn" onclick="exportCSV()">Export CSV</button>
-      </div>
-
-      <!-- Toolbar -->
-      <div class="toolbar">
-        <input type="text" id="searchBox" placeholder="Search any column..." oninput="render()">
-        <select id="statusFilter" onchange="render()">
-          <option value="">All billing status</option>
-          <option>Paid</option><option>Pending</option><option>Overdue</option><option>Draft</option>
-        </select>
-        <select id="recvFilter" onchange="render()">
-          <option value="">All receiving status</option>
-          <option>Received</option><option>Partial</option><option>Not Received</option>
-        </select>
-        <button class="btn" id="editModeBtn" onclick="toggleEditMode()">Enable editing</button>
-        <button class="btn primary" id="addRowBtn" style="display:none" onclick="addRow()">+ Add row</button>
-      </div>
-
-      <!-- Table -->
-      <div class="tbl-card">
-        <div class="tbl-wrap">
-          <table id="mainTable">
-            <thead><tr id="headerRow"></tr></thead>
-            <tbody id="tableBody"><tr><td colspan="25" class="loading"><span class="spinner"></span>Loading...</td></tr></tbody>
-          </table>
-        </div>
-        <div class="tbl-footer">
-          <span id="rowCount">—</span>
-          <span id="totalAmt" style="font-weight:700;color:#1a2a4a"></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── AUDIT LOG TAB ── -->
-    <div class="tab-pane" id="tabAudit">
-      <div class="audit-filters">
-        <select id="auditTeamFilter" onchange="loadAudit()" style="display:none">
-          <option value="">All teams</option>
-        </select>
-        <select id="auditActionFilter" onchange="loadAudit()">
-          <option value="">All actions</option>
-          <option value="INSERT">Insert</option>
-          <option value="UPDATE">Update</option>
-          <option value="DELETE">Delete</option>
-        </select>
-        <input type="date" id="auditDateFrom" onchange="loadAudit()" placeholder="From date">
-        <input type="date" id="auditDateTo" onchange="loadAudit()" placeholder="To date">
-        <input type="text" id="auditSearch" placeholder="Search user / field..." oninput="loadAudit()" style="height:32px;font-size:12px;padding:0 9px;border:1px solid #ccc;border-radius:6px;background:#fff;outline:none;min-width:160px">
-        <button class="btn" onclick="loadAudit()">Refresh</button>
-      </div>
-      <div class="tbl-card">
-        <div class="tbl-wrap">
-          <table class="audit-table">
-            <thead>
-              <tr>
-                <th>When</th><th>User</th><th>Role</th><th>Team</th>
-                <th>Action</th><th>Field</th><th>Old value</th><th>New value</th><th>Entry ID</th>
-              </tr>
-            </thead>
-            <tbody id="auditBody"><tr><td colspan="9" class="loading">Select the Audit Log tab to load.</td></tr></tbody>
-          </table>
-        </div>
-        <div class="tbl-footer">
-          <span id="auditCount">—</span>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- Toast -->
-<div class="toast" id="toast"></div>
-
-<script>
-// ══════════════════════════════════════════
-//  !! CONFIGURATION — EDIT THESE 2 LINES !!
-// ══════════════════════════════════════════
-const SUPABASE_URL  = 'https://sb_publishable_n9DmfGv4G4kJcRMiHLQ1PA_DnXZMXST.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1na3VjYWFnemNsbHhuZWNpcmJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjU1OTcsImV4cCI6MjA5MTMwMTU5N30.pzhesD0POzMnZSRrXFHp33mCh94GsdpQW2ieVeWca1g';
-// ══════════════════════════════════════════
-
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-
-// Column definitions
-const COLS = [
-  {key:'cost_center',      label:'Cost Center',       w:110, type:'text'},
-  {key:'person_auth',      label:'Person Authorised', w:130, type:'text'},
-  {key:'voucher_type',     label:'Voucher Type',      w:105, type:'select', opts:['Sales','Purchase','Credit Note','Debit Note']},
-  {key:'income_head',      label:'Income Head',       w:105, type:'text'},
-  {key:'grp',              label:'Group',             w:70,  type:'text'},
-  {key:'client',           label:'Client',            w:110, type:'text'},
-  {key:'state',            label:'State',             w:90,  type:'text'},
-  {key:'gstin',            label:'GSTIN',             w:130, type:'text'},
-  {key:'poc_name',         label:'POC Name',          w:110, type:'text'},
-  {key:'poc_mobile',       label:'POC Mobile',        w:105, type:'text'},
-  {key:'poc_email',        label:'POC Email',         w:140, type:'text'},
-  {key:'description',      label:'Description',       w:145, type:'text'},
-  {key:'amount',           label:'Amount',            w:85,  type:'number'},
-  {key:'cgst',             label:'CGST',              w:70,  type:'number'},
-  {key:'sgst',             label:'SGST',              w:70,  type:'number'},
-  {key:'igst',             label:'IGST',              w:70,  type:'number'},
-  {key:'total',            label:'Total',             w:85,  type:'number'},
-  {key:'billing_status',   label:'Billing Status',    w:110, type:'select', opts:['Paid','Pending','Overdue','Draft']},
-  {key:'memo_no',          label:'Memo No.',          w:90,  type:'text'},
-  {key:'memo_date',        label:'Memo Date',         w:95,  type:'date'},
-  {key:'invoice_no',       label:'Invoice No.',       w:95,  type:'text'},
-  {key:'invoice_date',     label:'Invoice Date',      w:100, type:'date'},
-  {key:'receiving_status', label:'Receiving Status',  w:120, type:'select', opts:['Received','Partial','Not Received']},
-  {key:'remarks',          label:'Remarks',           w:125, type:'text'}
-];
-
-const SB_MAP = {Paid:'b-green',Pending:'b-amber',Overdue:'b-red',Draft:'b-gray'};
-const RV_MAP = {Received:'b-green',Partial:'b-amber','Not Received':'b-red'};
-
-// App state
-let currentUser = null, currentProfile = null, allTeams = [];
-let rows = [], editMode = false, unsaved = false;
-let pendingChanges = {}; // { rowId: { field: { old, new } } }
-let selectedTeamFilter = 'all';
-
-// ── Auth ──────────────────────────────────
-async function doLogin(){
-  const email = document.getElementById('loginEmail').value.trim();
-  const pass  = document.getElementById('loginPass').value;
-  document.getElementById('loginErr').textContent = '';
-  const {data,error} = await sb.auth.signInWithPassword({email, password:pass});
-  if(error){ document.getElementById('loginErr').textContent = error.message; return; }
-  await initApp(data.user);
-}
-
-async function doLogout(){
-  await sb.auth.signOut();
-  location.reload();
-}
-
-async function initApp(user){
-  currentUser = user;
-  const {data:profile} = await sb.from('profiles').select('*').eq('id', user.id).single();
-  currentProfile = profile;
-  const {data:teams} = await sb.from('teams').select('*').order('name');
-  allTeams = teams || [];
-
-  // Nav badge
-  document.getElementById('navUserName').textContent = profile.full_name || user.email;
-  const rb = document.getElementById('navRoleBadge');
-  rb.textContent = profile.role;
-  rb.className = 'role-badge rb-' + profile.role;
-
-  // Admin/partner extras
-  if(['admin','partner'].includes(profile.role)){
-    document.getElementById('statsRow').style.display = 'grid';
-    document.getElementById('teamPillsRow').style.display = 'flex';
-    buildTeamPills();
-    document.getElementById('auditTeamFilter').style.display = '';
-    const atf = document.getElementById('auditTeamFilter');
-    allTeams.forEach(t => { const o=document.createElement('option'); o.value=t.id; o.textContent=t.name; atf.appendChild(o); });
-  }
-
-  document.getElementById('loginPage').style.display = 'none';
-  document.getElementById('appPage').style.display = 'flex';
-  buildHeader();
-  await loadRows();
-}
-
-// ── Teams ─────────────────────────────────
-function buildTeamPills(){
-  const row = document.getElementById('teamPillsRow');
-  allTeams.forEach(t => {
-    const span = document.createElement('span');
-    span.className = 'team-pill';
-    span.dataset.tid = t.id;
-    span.textContent = t.name;
-    span.onclick = () => selectTeamPill(span);
-    row.appendChild(span);
-  });
-}
-
-function selectTeamPill(el){
-  document.querySelectorAll('.team-pill').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-  selectedTeamFilter = el.dataset.tid;
-  loadRows();
-}
-
-// ── Data loading ──────────────────────────
-async function loadRows(){
-  document.getElementById('tableBody').innerHTML = '<tr><td colspan="25" class="loading"><span class="spinner"></span>Loading...</td></tr>';
-  let q = sb.from('billing_entries').select('*').order('created_at', {ascending:false});
-  if(!['admin','partner'].includes(currentProfile.role)){
-    q = q.eq('team_id', currentProfile.team_id);
-  } else if(selectedTeamFilter !== 'all'){
-    q = q.eq('team_id', selectedTeamFilter);
-  }
-  const {data,error} = await q;
-  if(error){ toast('Error loading data: '+error.message, true); return; }
-  rows = data || [];
-  pendingChanges = {};
-  unsaved = false;
-  document.getElementById('unsavedDot').style.display = 'none';
-  render();
-  if(['admin','partner'].includes(currentProfile.role)) updateStats();
-}
-
-function updateStats(){
-  document.getElementById('statEntries').textContent = rows.length;
-  const total = rows.reduce((s,r)=>s+(Number(r.total)||0),0);
-  document.getElementById('statTotal').textContent = '₹'+total.toLocaleString('en-IN');
-  const teams = new Set(rows.map(r=>r.team_id)).size;
-  document.getElementById('statTeams').textContent = teams;
-  const pending = rows.filter(r=>r.billing_status==='Pending').reduce((s,r)=>s+(Number(r.total)||0),0);
-  document.getElementById('statPending').textContent = '₹'+pending.toLocaleString('en-IN');
-}
-
-// ── Table render ──────────────────────────
-function buildHeader(){
-  const hr = document.getElementById('headerRow');
-  hr.innerHTML = '';
-  if(editMode){ const th=document.createElement('th'); th.style.width='30px'; th.textContent='Del'; hr.appendChild(th); }
-  if(['admin','partner'].includes(currentProfile?.role)){
-    const th=document.createElement('th'); th.style.width='100px'; th.textContent='Team'; hr.appendChild(th);
-  }
-  COLS.forEach(c=>{
-    const th=document.createElement('th'); th.style.width=c.w+'px'; th.style.minWidth=c.w+'px'; th.textContent=c.label; hr.appendChild(th);
-  });
-}
-
-function cellDisplay(key,val){
-  if(key==='billing_status')   return val?`<span class="badge ${SB_MAP[val]||'b-gray'}">${val}</span>`:'';
-  if(key==='receiving_status') return val?`<span class="badge ${RV_MAP[val]||'b-gray'}">${val}</span>`:'';
-  if(['amount','cgst','sgst','igst','total'].includes(key)) return val?'₹'+Number(val).toLocaleString('en-IN'):'₹0';
-  return val||'';
-}
-
-function teamName(tid){ const t=allTeams.find(x=>x.id===tid); return t?t.name:tid||'—'; }
-
-function render(){
-  buildHeader();
-  const q  = document.getElementById('searchBox').value.toLowerCase();
-  const bs = document.getElementById('statusFilter').value;
-  const rs = document.getElementById('recvFilter').value;
-  let filtered = rows.filter(r=>{
-    if(bs && r.billing_status!==bs) return false;
-    if(rs && r.receiving_status!==rs) return false;
-    if(q) return COLS.some(c=>String(r[c.key]||'').toLowerCase().includes(q));
-    return true;
-  });
-  const tb = document.getElementById('tableBody');
-  tb.innerHTML = '';
-  if(!filtered.length){
-    tb.innerHTML = '<tr><td colspan="30" style="text-align:center;padding:30px;color:#aaa">No records found</td></tr>';
-  }
-  filtered.forEach(r=>{
-    const tr = document.createElement('tr');
-    if(editMode){
-      const td=document.createElement('td'); td.style.textAlign='center';
-      const btn=document.createElement('button'); btn.className='del-btn'; btn.textContent='✕';
-      btn.onclick=()=>deleteRow(r.id); td.appendChild(btn); tr.appendChild(td);
-    }
-    if(['admin','partner'].includes(currentProfile?.role)){
-      const td=document.createElement('td'); td.style.maxWidth='100px';
-      td.innerHTML=`<span class="badge b-blue" style="font-size:10px">${teamName(r.team_id)}</span>`;
-      tr.appendChild(td);
-    }
-    COLS.forEach(c=>{
-      const td=document.createElement('td');
-      td.style.width=c.w+'px'; td.style.minWidth=c.w+'px';
-      td.title=r[c.key]||'';
-      td.innerHTML=cellDisplay(c.key,r[c.key]);
-      if(editMode){ td.className='editable'; td.onclick=()=>startEdit(td,r,c); }
-      tr.appendChild(td);
-    });
-    tb.appendChild(tr);
-  });
-  document.getElementById('rowCount').textContent=`Showing ${filtered.length} of ${rows.length} rows`;
-  const tot=filtered.reduce((s,r)=>s+(Number(r.total)||0),0);
-  document.getElementById('totalAmt').textContent=filtered.length?'Grand Total: ₹'+tot.toLocaleString('en-IN'):'';
-}
-
-// ── Inline editing ────────────────────────
-function startEdit(td, row, col){
-  if(!editMode) return;
-  const oldVal = row[col.key];
-  let el;
-  if(col.type==='select'){
-    el=document.createElement('select'); el.className='cs';
-    col.opts.forEach(o=>{ const op=document.createElement('option'); op.value=o; op.textContent=o; if(o===oldVal) op.selected=true; el.appendChild(op); });
-  } else {
-    el=document.createElement('input'); el.className='ci';
-    el.type=col.type||'text'; el.value=oldVal||'';
-  }
-  td.innerHTML=''; td.appendChild(el); el.focus();
-
-  const commit=()=>{
-    const newVal = col.type==='number'?(Number(el.value)||0):el.value;
-    if(String(newVal)!==String(oldVal)){
-      row[col.key]=newVal;
-      if(!pendingChanges[row.id]) pendingChanges[row.id]={};
-      if(!pendingChanges[row.id][col.key]) pendingChanges[row.id][col.key]={old:oldVal};
-      pendingChanges[row.id][col.key].new=newVal;
-      markUnsaved();
-    }
-    render();
-  };
-  el.addEventListener('blur',commit);
-  el.addEventListener('keydown',e=>{ if(e.key==='Enter') el.blur(); if(e.key==='Escape') render(); });
-}
-
-function markUnsaved(){ unsaved=true; document.getElementById('unsavedDot').style.display='inline-block'; }
-
-// ── Save all pending changes ───────────────
-async function saveChanges(){
-  if(!unsaved){ toast('No changes to save.'); return; }
-  const ids = Object.keys(pendingChanges);
-  let saved=0, errors=0;
-  for(const id of ids){
-    const changes = pendingChanges[id];
-    const row = rows.find(r=>r.id===id);
-    if(!row) continue;
-
-    // Build update object
-    const updateObj={};
-    Object.keys(changes).forEach(f=>{ updateObj[f]=changes[f].new; });
-    const {error} = await sb.from('billing_entries').update(updateObj).eq('id',id);
-    if(error){ errors++; continue; }
-
-    // Write one audit row per changed field
-    for(const [field,vals] of Object.entries(changes)){
-      await sb.from('audit_log').insert({
-        entry_id:   id,
-        team_id:    row.team_id,
-        user_id:    currentUser.id,
-        user_name:  currentProfile.full_name || currentUser.email,
-        user_role:  currentProfile.role,
-        action:     'UPDATE',
-        field_name: field,
-        old_value:  String(vals.old??''),
-        new_value:  String(vals.new??'')
-      });
-    }
-    saved++;
-  }
-  pendingChanges={}; unsaved=false;
-  document.getElementById('unsavedDot').style.display='none';
-  toast(saved+' row(s) saved'+(errors?' ('+errors+' errors)':''));
-  await loadRows();
-}
-
-async function discardChanges(){
-  if(!confirm('Discard all unsaved changes?')) return;
-  pendingChanges={}; unsaved=false;
-  document.getElementById('unsavedDot').style.display='none';
-  await loadRows();
-}
-
-// ── Add / Delete ──────────────────────────
-async function addRow(){
-  const teamId = ['admin','partner'].includes(currentProfile.role)
-    ? (selectedTeamFilter!=='all' ? selectedTeamFilter : allTeams[0]?.id)
-    : currentProfile.team_id;
-  const newRow={
-    team_id:teamId, cost_center:'', person_auth:'', voucher_type:'Sales',
-    income_head:'', grp:'', client:'', state:'', gstin:'', poc_name:'',
-    poc_mobile:'', poc_email:'', description:'', amount:0, cgst:0, sgst:0,
-    igst:0, total:0, billing_status:'Draft', memo_no:'', memo_date:null,
-    invoice_no:'', invoice_date:null, receiving_status:'Not Received', remarks:'',
-    created_by: currentUser.id
-  };
-  const {data,error}=await sb.from('billing_entries').insert(newRow).select().single();
-  if(error){ toast('Error adding row: '+error.message, true); return; }
-  await sb.from('audit_log').insert({
-    entry_id:data.id, team_id:teamId, user_id:currentUser.id,
-    user_name:currentProfile.full_name||currentUser.email,
-    user_role:currentProfile.role, action:'INSERT',
-    field_name:null, old_value:null, new_value:'New row created'
-  });
-  toast('Row added');
-  await loadRows();
-}
-
-async function deleteRow(id){
-  if(!confirm('Delete this row permanently?')) return;
-  const row=rows.find(r=>r.id===id);
-  const {error}=await sb.from('billing_entries').delete().eq('id',id);
-  if(error){ toast('Error deleting: '+error.message, true); return; }
-  await sb.from('audit_log').insert({
-    entry_id:null, team_id:row?.team_id, user_id:currentUser.id,
-    user_name:currentProfile.full_name||currentUser.email,
-    user_role:currentProfile.role, action:'DELETE',
-    field_name:null, old_value:'Row '+id, new_value:'Deleted'
-  });
-  toast('Row deleted');
-  await loadRows();
-}
-
-// ── Edit mode toggle ──────────────────────
-function toggleEditMode(){
-  editMode=!editMode;
-  document.getElementById('editBar').style.display=editMode?'flex':'none';
-  document.getElementById('addRowBtn').style.display=editMode?'':'none';
-  document.getElementById('editModeBtn').textContent=editMode?'View mode':'Enable editing';
-  render();
-}
-
-// ── Export CSV ────────────────────────────
-function exportCSV(){
-  const hdr=COLS.map(c=>c.label).join(',');
-  const body=rows.map(r=>COLS.map(c=>'"'+(r[c.key]??'')+'"').join(',')).join('\n');
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([hdr+'\n'+body],{type:'text/csv'}));
-  a.download='billing_export.csv'; a.click();
-}
-
-// ── Audit log ─────────────────────────────
-async function loadAudit(){
-  document.getElementById('auditBody').innerHTML='<tr><td colspan="9" class="loading"><span class="spinner"></span>Loading...</td></tr>';
-  let q=sb.from('audit_log').select('*, teams(name)').order('changed_at',{ascending:false}).limit(500);
-  const tf=document.getElementById('auditTeamFilter').value;
-  const af=document.getElementById('auditActionFilter').value;
-  const df=document.getElementById('auditDateFrom').value;
-  const dt=document.getElementById('auditDateTo').value;
-  const sr=document.getElementById('auditSearch').value.toLowerCase();
-  if(!['admin','partner'].includes(currentProfile.role)) q=q.eq('team_id',currentProfile.team_id);
-  else if(tf) q=q.eq('team_id',tf);
-  if(af) q=q.eq('action',af);
-  if(df) q=q.gte('changed_at',df);
-  if(dt) q=q.lte('changed_at',dt+'T23:59:59');
-  const {data,error}=await q;
-  if(error){ toast('Audit error: '+error.message,true); return; }
-  let logs=data||[];
-  if(sr) logs=logs.filter(l=>(l.user_name||'').toLowerCase().includes(sr)||(l.field_name||'').toLowerCase().includes(sr));
-  const ab=document.getElementById('auditBody');
-  ab.innerHTML='';
-  if(!logs.length){ ab.innerHTML='<tr><td colspan="9" style="text-align:center;padding:24px;color:#aaa">No audit entries found</td></tr>'; }
-  logs.forEach(l=>{
-    const tr=document.createElement('tr');
-    const when=new Date(l.changed_at).toLocaleString('en-IN',{dateStyle:'short',timeStyle:'short'});
-    const actionCls={INSERT:'ab-insert',UPDATE:'ab-update',DELETE:'ab-delete'}[l.action]||'';
-    tr.innerHTML=`
-      <td>${when}</td>
-      <td><b>${l.user_name||'—'}</b></td>
-      <td><span class="badge ${l.user_role==='admin'?'b-amber':l.user_role==='partner'?'b-green':'b-gray'}">${l.user_role||'—'}</span></td>
-      <td>${l.teams?.name||'—'}</td>
-      <td><span class="action-badge ${actionCls}">${l.action}</span></td>
-      <td>${l.field_name||'—'}</td>
-      <td style="color:#a32d2d;max-width:140px;overflow:hidden;text-overflow:ellipsis">${l.old_value||'—'}</td>
-      <td style="color:#2d6a0a;max-width:140px;overflow:hidden;text-overflow:ellipsis">${l.new_value||'—'}</td>
-      <td style="font-size:10px;color:#aaa;max-width:80px;overflow:hidden;text-overflow:ellipsis" title="${l.entry_id||''}">${l.entry_id?l.entry_id.slice(0,8)+'…':'—'}</td>
-    `;
-    ab.appendChild(tr);
-  });
-  document.getElementById('auditCount').textContent=`Showing ${logs.length} entries`;
-}
-
-// ── Tabs ──────────────────────────────────
-function switchTab(tab){
-  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');
-  document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1)+'Btn').classList.add('active');
-  if(tab==='audit') loadAudit();
-}
-
-// ── Toast ─────────────────────────────────
-function toast(msg, isErr=false){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.style.background=isErr?'#a32d2d':'#1a2a4a';
-  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000);
-}
-
-  <script>
-const SUPABASE_URL  = 'https://mgkucaagzcllxnecirbi.supabase.co';
-const SUPABASE_ANON = 'PASTE_YOUR_ANON_OR_PUBLISHABLE_KEY';
-
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-
-// Quick connectivity + auth config check
-(async function testSupabaseConnection() {
-  try {
-    const { data, error } = await sb.auth.getSession();
-    if (error) {
-      console.error('Supabase reachable, but auth error:', error.message);
-      document.getElementById('loginErr').textContent = `Auth config issue: ${error.message}`;
-      return;
-    }
-    console.log('Supabase connection OK', data);
-  } catch (e) {
-    console.error('Network/URL issue:', e);
-    document.getElementById('loginErr').textContent =
-      'Cannot reach Supabase. Check SUPABASE_URL / internet / firewall.';
-  }
-})();
-</script>
-// ── Auto-login on page load ───────────────
-sb.auth.getSession().then(({data:{session}})=>{
-  if(session) initApp(session.user);
-});
-</script>
 </body>
 </html>
