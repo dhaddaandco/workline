@@ -4,7 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Billing Table</title>
-    <style>
+    
+     <h2>Supabase Connection Test</h2>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+const supabaseUrl = "https://mgkucaagzcllxnecirbi.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1na3VjYWFnemNsbHhuZWNpcmJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjU1OTcsImV4cCI6MjA5MTMwMTU5N30.pzhesD0POzMnZSRrXFHp33mCh94GsdpQW2ieVeWca1g";
+
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+async function testConnection() {
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  if (error) {
+    console.log("❌ Error:", error.message);
+  } else {
+    console.log("✅ Connected to Supabase");
+  }
+}
+
+testConnection();
+</script>
+        <style>
         body {
             font-family: Arial, sans-serif;
         }
