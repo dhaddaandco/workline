@@ -12,7 +12,442 @@
 <h2>TEAM</h2>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            overflow-x: auto;
+            display: block;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+            font-size: 14px;
+        }
+        th {
+            background-color: #f4f4f4;
+            position: sticky;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
 
+<h2>Billing Details</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Cost Center</th>
+            <th>Person Authorised</th>
+            <th>Voucher Type</th>
+            <th>Income Head</th>
+            <th>Group</th>
+            <th>Client</th>
+            <th>State</th>
+            <th>GSTIN</th>
+            <th>POC Name</th>
+            <th>POC Mobile</th>
+            <th>POC Email</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>CGST</th>
+            <th>SGST</th>
+            <th>IGST</th>
+            <th>Total</th>
+            <th>Billing Status</th>
+            <th>Memo No.</th>
+            <th>Memo Date</th>
+            <th>Invoice No.</th>
+            <th>Invoice Date</th>
+            <th>Receiving Status</th>
+            <th>Remarks</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>CC001</td>
+            <td>John Doe</td>
+            <td>Sales</td>
+            <td>Consulting</td>
+            <td>A</td>
+            <td>ABC Pvt Ltd</td>
+            <td>Rajasthan</td>
+            <td>08ABCDE1234F1Z5</td>
+            <td>Rahul</td>
+            <td>9876543210</td>
+            <td>rahul@example.com</td>
+            <td>Service Charges</td>
+            <td>10000</td>
+            <td>900</td>
+            <td>900</td>
+            <td>0</td>
+            <td>11800</td>
+            <td>Pending</td>
+            <td>M001</td>
+            <td>01-04-2026</td>
+            <td>INV001</td>
+            <td>02-04-2026</td>
+            <td>Received</td>
+            <td>-</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Billing Table</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f7f7f7;
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    table {
+      width: 100%;
+      min-width: 2600px;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #1f4e78;
+      color: white;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    tbody tr:hover {
+      background: #eef5ff;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Billing / Voucher Details</h2>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Cost Center</th>
+          <th>Person Authorised</th>
+          <th>Voucher Type</th>
+          <th>Income Head Group</th>
+          <th>Client State</th>
+          <th>GSTIN</th>
+          <th>POC Name</th>
+          <th>POC Mobile</th>
+          <th>POC Email</th>
+          <th>Description</th>
+          <th>Amount</th>
+          <th>CGST</th>
+          <th>SGST</th>
+          <th>IGST</th>
+          <th>Total</th>
+          <th>Billing Status</th>
+          <th>Memo No.</th>
+          <th>Memo Date</th>
+          <th>Invoice No.</th>
+          <th>Invoice Date</th>
+          <th>Receiving Status</th>
+          <th>Remarks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Marketing</td>
+          <td>Rahul Sharma</td>
+          <td>Sales</td>
+          <td>Advertising</td>
+          <td>Rajasthan</td>
+          <td>08ABCDE1234F1Z5</td>
+          <td>Amit Jain</td>
+          <td>9876543210</td>
+          <td>amit@example.com</td>
+          <td>Digital campaign charges</td>
+          <td>10000</td>
+          <td>900</td>
+          <td>900</td>
+          <td>0</td>
+          <td>11800</td>
+          <td>Pending</td>
+          <td>M001</td>
+          <td>2026-04-09</td>
+          <td>INV101</td>
+          <td>2026-04-10</td>
+          <td>Received</td>
+          <td>Urgent billing</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Billing Voucher Table</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+
+    .toolbar {
+      display: flex; gap: 10px; align-items: center;
+      margin-bottom: 14px; flex-wrap: wrap;
+    }
+    .toolbar input, .toolbar select {
+      height: 36px; font-size: 13px; padding: 0 10px;
+      border: 1px solid #ccc; border-radius: 6px;
+      background: #fff; outline: none;
+    }
+    .toolbar input { flex: 1; min-width: 160px; }
+    .toolbar button {
+      height: 36px; padding: 0 16px; font-size: 13px;
+      border: 1px solid #ccc; border-radius: 6px;
+      background: #fff; cursor: pointer;
+    }
+    .toolbar button:hover { background: #f0f0f0; }
+
+    .tbl-wrap {
+      overflow-x: auto;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background: #fff;
+    }
+    table {
+      width: 100%; border-collapse: collapse;
+      table-layout: fixed; font-size: 13px;
+    }
+    thead { position: sticky; top: 0; z-index: 2; }
+    thead tr { background: #f9f9f9; }
+    th {
+      padding: 10px 10px; text-align: left;
+      font-weight: 600; font-size: 12px; color: #555;
+      border-bottom: 1px solid #ddd;
+      white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; cursor: pointer;
+    }
+    th:hover { color: #222; }
+    td {
+      padding: 9px 10px; border-bottom: 1px solid #eee;
+      color: #333; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafafa; }
+
+    .badge {
+      display: inline-block; padding: 2px 9px;
+      border-radius: 20px; font-size: 11px; font-weight: 600;
+    }
+    .b-green  { background: #EAF3DE; color: #3B6D11; }
+    .b-amber  { background: #FAEEDA; color: #854F0B; }
+    .b-red    { background: #FCEBEB; color: #A32D2D; }
+    .b-blue   { background: #E6F1FB; color: #185FA5; }
+    .b-gray   { background: #F1EFE8; color: #5F5E5A; }
+
+    .footer {
+      margin-top: 10px; font-size: 12px; color: #777;
+      display: flex; justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+<div class="toolbar">
+  <input type="text" id="searchBox" placeholder="Search any column..." oninput="render()">
+  <select id="statusFilter" onchange="render()">
+    <option value="">All billing status</option>
+    <option>Paid</option><option>Pending</option>
+    <option>Overdue</option><option>Draft</option>
+  </select>
+  <select id="recvFilter" onchange="render()">
+    <option value="">All receiving status</option>
+    <option>Received</option><option>Partial</option>
+    <option>Not Received</option>
+  </select>
+  <button onclick="addRow()">+ Add Row</button>
+</div>
+
+<div class="tbl-wrap">
+  <table>
+    <thead><tr id="headerRow"></tr></thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+</div>
+
+<div class="footer">
+  <span id="rowCount">Showing 0 rows</span>
+  <span id="totalAmt" style="font-weight:600"></span>
+</div>
+
+<script>
+const COLS = [
+  {key:'costCenter',     label:'Cost Center',        w:120},
+  {key:'personAuth',     label:'Person Authorised',  w:140},
+  {key:'voucherType',    label:'Voucher Type',        w:110},
+  {key:'incomeHead',     label:'Income Head',         w:110},
+  {key:'group',          label:'Group',               w:80},
+  {key:'client',         label:'Client',              w:120},
+  {key:'state',          label:'State',               w:100},
+  {key:'gstin',          label:'GSTIN',               w:140},
+  {key:'pocName',        label:'POC Name',            w:120},
+  {key:'pocMobile',      label:'POC Mobile',          w:110},
+  {key:'pocEmail',       label:'POC Email',           w:150},
+  {key:'description',    label:'Description',         w:160},
+  {key:'amount',         label:'Amount',              w:95},
+  {key:'cgst',           label:'CGST',                w:80},
+  {key:'sgst',           label:'SGST',                w:80},
+  {key:'igst',           label:'IGST',                w:80},
+  {key:'total',          label:'Total',               w:95},
+  {key:'billingStatus',  label:'Billing Status',      w:115},
+  {key:'memoNo',         label:'Memo No.',            w:95},
+  {key:'memoDate',       label:'Memo Date',           w:100},
+  {key:'invoiceNo',      label:'Invoice No.',         w:100},
+  {key:'invoiceDate',    label:'Invoice Date',        w:105},
+  {key:'receivingStatus',label:'Receiving Status',    w:130},
+  {key:'remarks',        label:'Remarks',             w:140}
+];
+
+const STATUS_BADGE = {Paid:'b-green', Pending:'b-amber', Overdue:'b-red', Draft:'b-gray'};
+const RECV_BADGE   = {Received:'b-green', Partial:'b-amber', 'Not Received':'b-red'};
+
+// ── Sample data — replace with your real data or fetch from API ──
+let data = [
+  {costCenter:'HQ', personAuth:'Ramesh Kumar', voucherType:'Sales', incomeHead:'Service Revenue', group:'A', client:'ABC Corp', state:'Rajasthan', gstin:'08AABCU9603R1ZX', pocName:'Neha Sharma', pocMobile:'9876543210', pocEmail:'neha@abc.com', description:'IT Services Q1', amount:50000, cgst:4500, sgst:4500, igst:0, total:59000, billingStatus:'Paid', memoNo:'M-1001', memoDate:'2025-01-10', invoiceNo:'INV-2001', invoiceDate:'2025-01-12', receivingStatus:'Received', remarks:'On time'},
+  {costCenter:'Branch A', personAuth:'Sunita Joshi', voucherType:'Purchase', incomeHead:'Product Sale', group:'B', client:'XYZ Ltd', state:'Maharashtra', gstin:'27AAHCK2702H1ZF', pocName:'Ravi Patel', pocMobile:'8765432109', pocEmail:'ravi@xyz.com', description:'Hardware Supply', amount:120000, cgst:0, sgst:0, igst:21600, total:141600, billingStatus:'Pending', memoNo:'M-1002', memoDate:'2025-02-05', invoiceNo:'INV-2002', invoiceDate:'2025-02-07', receivingStatus:'Partial', remarks:'Awaiting balance'}
+];
+
+let sortKey = '', sortAsc = true, nextId = data.length;
+
+function buildHeader() {
+  const hr = document.getElementById('headerRow');
+  COLS.forEach(c => {
+    const th = document.createElement('th');
+    th.style.width = c.w + 'px';
+    th.textContent = c.label + ' ⇅';
+    th.dataset.key = c.key;
+    th.onclick = () => {
+      if (sortKey === c.key) sortAsc = !sortAsc;
+      else { sortKey = c.key; sortAsc = true; }
+      render();
+    };
+    hr.appendChild(th);
+  });
+}
+
+function cellHtml(key, val) {
+  if (key === 'billingStatus')
+    return val ? `<span class="badge ${STATUS_BADGE[val] || 'b-gray'}">${val}</span>` : '';
+  if (key === 'receivingStatus')
+    return val ? `<span class="badge ${RECV_BADGE[val] || 'b-gray'}">${val}</span>` : '';
+  if (['amount','cgst','sgst','igst','total'].includes(key))
+    return val ? '₹' + Number(val).toLocaleString('en-IN') : '';
+  return val || '';
+}
+
+function render() {
+  const q  = document.getElementById('searchBox').value.toLowerCase();
+  const bs = document.getElementById('statusFilter').value;
+  const rs = document.getElementById('recvFilter').value;
+
+  let rows = data.filter(r => {
+    if (bs && r.billingStatus !== bs) return false;
+    if (rs && r.receivingStatus !== rs) return false;
+    if (q) return COLS.some(c => String(r[c.key] || '').toLowerCase().includes(q));
+    return true;
+  });
+
+  if (sortKey) {
+    rows.sort((a, b) => {
+      let av = a[sortKey] || '', bv = b[sortKey] || '';
+      if (!isNaN(av) && !isNaN(bv)) { av = Number(av); bv = Number(bv); }
+      return sortAsc ? (av > bv ? 1 : av < bv ? -1 : 0) : (av < bv ? 1 : av > bv ? -1 : 0);
+    });
+  }
+
+  const tb = document.getElementById('tableBody');
+  tb.innerHTML = '';
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+    COLS.forEach(c => {
+      const td = document.createElement('td');
+      td.style.width = c.w + 'px';
+      td.innerHTML = cellHtml(c.key, r[c.key]);
+      td.title = r[c.key] || '';
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+
+  document.getElementById('rowCount').textContent = `Showing ${rows.length} row${rows.length !== 1 ? 's' : ''}`;
+  const tot = rows.reduce((s, r) => s + (Number(r.total) || 0), 0);
+  document.getElementById('totalAmt').textContent = rows.length ? 'Grand Total: ₹' + tot.toLocaleString('en-IN') : '';
+}
+
+function addRow() {
+  data.unshift({
+    costCenter:'', personAuth:'', voucherType:'Sales', incomeHead:'',
+    group:'', client:'', state:'', gstin:'', pocName:'', pocMobile:'',
+    pocEmail:'', description:'', amount:0, cgst:0, sgst:0, igst:0, total:0,
+    billingStatus:'Draft', memoNo:'', memoDate:'', invoiceNo:'',
+    invoiceDate:'', receivingStatus:'Not Received', remarks:''
+  });
+  render();
+}
+
+buildHeader();
+render();
+</script>
+</body>
+</html>
 
 <!--Try1-->
 <h1>Welcome to freeCodeCamp</h1>
