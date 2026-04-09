@@ -56,7 +56,19 @@
     <input type="email" id="email" placeholder="Enter email" />
     <input type="password" id="password" placeholder="Enter password" />
 
-    <button>Login</button>
+    <button onclick="showLoginData()">Login</button>
   </div>
+
+  <script>
+    function showLoginData() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      console.log("Email:", email);
+      console.log("Password:", password);
+
+      alert("Button click is working");
+    }
+  </script>
 </body>
 </html>
