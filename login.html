@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -56,18 +58,31 @@
     <input type="email" id="email" placeholder="Enter email" />
     <input type="password" id="password" placeholder="Enter password" />
 
-    <button onclick="showLoginData()">Login</button>
+    <button onclick="loginUser()">Login</button>
   </div>
 
   <script>
-    function showLoginData() {
+    const supabaseUrl = "https://mgkucaagzcllxnecirbi.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1na3VjYWFnemNsbHhuZWNpcmJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjU1OTcsImV4cCI6MjA5MTMwMTU5N30.pzhesD0POzMnZSRrXFHp33mCh94GsdpQW2ieVeWca1g";
+
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function loginUser() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      console.log("Email:", email);
-      console.log("Password:", password);
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
 
-      alert("Button click is working");
+      if (error) {
+        alert("Login failed: " + error.message);
+        console.log(error);
+      } else {
+        alert("Login successful");
+        console.log("Logged in user:", data.user);
+      }
     }
   </script>
 </body>
