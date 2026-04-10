@@ -11,7 +11,7 @@
     const supabaseUrl = "https://mgkucaagzcllxnecirbi.supabase.co";
     const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1na3VjYWFnemNsbHhuZWNpcmJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjU1OTcsImV4cCI6MjA5MTMwMTU5N30.pzhesD0POzMnZSRrXFHp33mCh94GsdpQW2ieVeWca1g";
 
-    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+     const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
   async function loadBillingData() {
     const { data: userData, error: userError } = await supabaseClient.auth.getUser();
@@ -21,10 +21,29 @@
       return;
     }
 
-    const { data, error } = await supabaseClient
+    const loggedInUser = userData.user;
+
+    const { data: appUser, error: appUserError } = await supabaseClient
+      .from("app_users")
+      .select("role, team_id")
+      .eq("user_id", loggedInUser.id)
+      .single();
+
+    if (appUserError) {
+      console.log("Error loading app user:", appUserError.message);
+      return;
+    }
+
+    let query = supabaseClient
       .from("billing_data")
       .select("*")
       .order("id", { ascending: true });
+
+    if (appUser.role === "member") {
+      query = query.eq("team_id", appUser.team_id);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.log("Error loading billing data:", error.message);
@@ -36,7 +55,6 @@
 
     data.forEach((row) => {
       const tr = document.createElement("tr");
-
       tr.innerHTML = `
         <td>${row.cost_center ?? ""}</td>
         <td>${row.person_authorised ?? ""}</td>
