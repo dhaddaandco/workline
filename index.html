@@ -85,9 +85,10 @@
         <td>${row.remarks ?? ""}</td>
         <td><button type="button" onclick="editBillingRow(${row.id})">Edit</button></td>
       `;
-      highlightRowFromUrl();
       tableBody.appendChild(tr);
     });
+    
+      highlightRowFromUrl();
   }
 
   async function logoutUser() {
@@ -346,18 +347,22 @@ td:first-child {
   <button onclick="logoutUser()">Logout</button>
   <button type="button" onclick="window.location.href='logs.html'">View Logs</button>
   <h2>Billing Details</h2>
-  <h3>Add Billing Entry</h3>
+  <h3 id="form-title">Add Billing Entry</h3>
 
 <div class="entry-form">
+  <input type="hidden" id="editing_row_id" />
+
   <input type="text" id="person_authorised" placeholder="Person Authorised" />
   <input type="text" id="voucher_type" placeholder="Voucher Type" />
   <input type="text" id="income_head" placeholder="Income Head" />
   <input type="text" id="client" placeholder="Client" />
   <input type="text" id="description" placeholder="Description" />
   <input type="number" id="amount" placeholder="Amount" />
-  <button type="button" onclick="addBillingEntry()">Add Entry</button>
-</div>
 
+  <button type="button" id="save-button" onclick="saveBillingEntry()">Add Entry</button>
+  <button type="button" id="cancel-edit-button" onclick="resetBillingForm()" style="display: none;">Cancel Edit</button>
+</div>
+  
   <table>
     <thead>
       <tr>
