@@ -67,36 +67,36 @@
 
     const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function loginUser() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+  async function loginUser() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: password
-      });
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
 
-      if (error) {
-        alert("Login failed: " + error.message);
-        console.log(error);
-        return;
-      }
+    if (error) {
+      alert("Login failed: " + error.message);
+      console.log(error);
+      return;
+    }
 
-      const user = data.user;
+    const user = data.user;
 
-      const { data: appUser, error: appUserError } = await supabaseClient
-        .from("app_users")
-        .select("role, team_id")
-        .eq("user_id", user.id)
-        .single();
+    const { data: appUser, error: appUserError } = await supabaseClient
+      .from("app_users")
+      .select("role, team_id")
+      .eq("user_id", user.id)
+      .single();
 
-      if (appUserError) {
-        alert("Could not fetch role: " + appUserError.message);
-        console.log(appUserError);
-        return;
-      }
+    if (appUserError) {
+      alert("Could not fetch role: " + appUserError.message);
+      console.log(appUserError);
+      return;
+    }
 
-      if (appUser.role === "admin") {
+    if (appUser.role === "admin") {
       window.location.href = "index.html";
     } else if (appUser.role === "partner") {
       window.location.href = "index.html";
@@ -105,6 +105,7 @@
     } else {
       alert("Unknown role");
     }
-  </script>
+  }
+</script>
 </body>
 </html>
