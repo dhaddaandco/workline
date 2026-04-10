@@ -79,10 +79,26 @@
       if (error) {
         alert("Login failed: " + error.message);
         console.log(error);
-      } else {
-        alert("Login successful");
-        console.log("Logged in user:", data.user);
+        return;
       }
+
+      const user = data.user;
+
+      const { data: appUser, error: appUserError } = await supabaseClient
+        .from("app_users")
+        .select("role, team_id")
+        .eq("user_id", user.id)
+        .single();
+
+      if (appUserError) {
+        alert("Could not fetch role: " + appUserError.message);
+        console.log(appUserError);
+        return;
+      }
+
+      alert("Login successful. Role: " + appUser.role);
+      console.log("Logged in auth user:", user);
+      console.log("App user data:", appUser);
     }
   </script>
 </body>
