@@ -171,6 +171,13 @@
   loadBillingData();
 }
 
+    function openBillingModalForAdd() {
+  document.getElementById("billing-modal").style.display = "block";
+}
+
+function closeBillingModal() {
+  document.getElementById("billing-modal").style.display = "none";
+}
 
   function highlightRowFromUrl() {
   const params = new URLSearchParams(window.location.search);
@@ -341,28 +348,63 @@ td:first-child {
   padding: 10px;
   font-size: 14px;
 }
+
+    .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  width: 80%;
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+}
   </style>
 </head>
 <body>
   <button onclick="logoutUser()">Logout</button>
   <button type="button" onclick="window.location.href='logs.html'">View Logs</button>
-  <h2>Billing Details</h2>
-  <h3 id="form-title">Add Billing Entry</h3>
+  <button type="button" onclick="openBillingModalForAdd()">Add Entry</button>
 
-<div class="entry-form">
-  <input type="hidden" id="editing_row_id" />
+  <div id="billing-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close-button" onclick="closeBillingModal()">&times;</span>
 
-  <input type="text" id="person_authorised" placeholder="Person Authorised" />
-  <input type="text" id="voucher_type" placeholder="Voucher Type" />
-  <input type="text" id="income_head" placeholder="Income Head" />
-  <input type="text" id="client" placeholder="Client" />
-  <input type="text" id="description" placeholder="Description" />
-  <input type="number" id="amount" placeholder="Amount" />
+    <h3 id="form-title">Add Billing Entry</h3>
 
-  <button type="button" id="save-button" onclick="saveBillingEntry()">Add Entry</button>
-  <button type="button" id="cancel-edit-button" onclick="resetBillingForm()" style="display: none;">Cancel Edit</button>
+    <div class="entry-form">
+      <input type="hidden" id="editing_row_id" />
+
+      <input type="text" id="person_authorised" placeholder="Person Authorised" />
+      <input type="text" id="voucher_type" placeholder="Voucher Type" />
+      <input type="text" id="income_head" placeholder="Income Head" />
+      <input type="text" id="client" placeholder="Client" />
+      <input type="text" id="description" placeholder="Description" />
+      <input type="number" id="amount" placeholder="Amount" />
+
+      <button type="button" id="save-button" onclick="saveBillingEntry()">Add Entry</button>
+      <button type="button" id="cancel-edit-button" onclick="resetBillingForm()" style="display: none;">Cancel Edit</button>
+    </div>
+  </div>
 </div>
-  
+  <h2>Billing Details</h2>
   <table>
     <thead>
       <tr>
