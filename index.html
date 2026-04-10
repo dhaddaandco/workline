@@ -123,11 +123,16 @@
     }
 
     th {
-      background-color: #f4f4f4;
-      position: sticky;
-      top: 0;
-    }
+  background-color: #f4f4f4;
+  position: sticky;
+  top: 0;
+}
 
+th:first-child,
+td:first-child {
+  min-width: 120px;
+  white-space: nowrap;
+}
     button {
       padding: 10px 16px;
       margin-bottom: 15px;
