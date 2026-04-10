@@ -13,96 +13,100 @@
 
      const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  async function loadBillingData() {
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+    async function loadBillingData() {
+      const { data: userData, error: userError } = await supabaseClient.auth.getUser();
 
-    if (userError || !userData.user) {
-      window.location.href = "login.html";
-      return;
+      if (userError || !userData.user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const loggedInUser = userData.user;
+
+      const { data: appUser, error: appUserError } = await supabaseClient
+        .from("app_users")
+        .select("role, team_id")
+        .eq("user_id", loggedInUser.id)
+        .single();
+
+      if (appUserError) {
+        console.log("Error loading app user:", appUserError.message);
+        return;
+      }
+
+      let query = supabaseClient
+        .from("billing_data")
+        .select("*")
+        .order("id", { ascending: true });
+
+      if (appUser.role === "member") {
+        query = query.eq("team_id", appUser.team_id);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.log("Error loading billing data:", error.message);
+        return;
+      }
+
+      const tableBody = document.getElementById("billing-table-body");
+      tableBody.innerHTML = "";
+
+      data.forEach((row) => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${row.cost_center ?? ""}</td>
+          <td>${row.person_authorised ?? ""}</td>
+          <td>${row.voucher_type ?? ""}</td>
+          <td>${row.income_head ?? ""}</td>
+          <td>${row.group_name ?? ""}</td>
+          <td>${row.client ?? ""}</td>
+          <td>${row.state ?? ""}</td>
+          <td>${row.gstin ?? ""}</td>
+          <td>${row.poc_name ?? ""}</td>
+          <td>${row.poc_mobile ?? ""}</td>
+          <td>${row.poc_email ?? ""}</td>
+          <td>${row.description ?? ""}</td>
+          <td>${row.amount ?? ""}</td>
+          <td>${row.cgst ?? ""}</td>
+          <td>${row.sgst ?? ""}</td>
+          <td>${row.igst ?? ""}</td>
+          <td>${row.total ?? ""}</td>
+          <td>${row.billing_status ?? ""}</td>
+          <td>${row.memo_no ?? ""}</td>
+          <td>${row.memo_date ?? ""}</td>
+          <td>${row.invoice_no ?? ""}</td>
+          <td>${row.invoice_date ?? ""}</td>
+          <td>${row.receiving_status ?? ""}</td>
+          <td>${row.remarks ?? ""}</td>
+        `;
+
+        tableBody.appendChild(tr);
+      });
     }
 
-    const loggedInUser = userData.user;
-
-    const { data: appUser, error: appUserError } = await supabaseClient
-      .from("app_users")
-      .select("role, team_id")
-      .eq("user_id", loggedInUser.id)
-      .single();
-
-    if (appUserError) {
-      console.log("Error loading app user:", appUserError.message);
-      return;
-    }
-
-    let query = supabaseClient
-      .from("billing_data")
-      .select("*")
-      .order("id", { ascending: true });
-
-    if (appUser.role === "member") {
-      query = query.eq("team_id", appUser.team_id);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.log("Error loading billing data:", error.message);
-      return;
-    }
-
-    const tableBody = document.getElementById("billing-table-body");
-    tableBody.innerHTML = "";
-
-    data.forEach((row) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${row.cost_center ?? ""}</td>
-        <td>${row.person_authorised ?? ""}</td>
-        <td>${row.voucher_type ?? ""}</td>
-        <td>${row.income_head ?? ""}</td>
-        <td>${row.group_name ?? ""}</td>
-        <td>${row.client ?? ""}</td>
-        <td>${row.state ?? ""}</td>
-        <td>${row.gstin ?? ""}</td>
-        <td>${row.poc_name ?? ""}</td>
-        <td>${row.poc_mobile ?? ""}</td>
-        <td>${row.poc_email ?? ""}</td>
-        <td>${row.description ?? ""}</td>
-        <td>${row.amount ?? ""}</td>
-        <td>${row.cgst ?? ""}</td>
-        <td>${row.sgst ?? ""}</td>
-        <td>${row.igst ?? ""}</td>
-        <td>${row.total ?? ""}</td>
-        <td>${row.billing_status ?? ""}</td>
-        <td>${row.memo_no ?? ""}</td>
-        <td>${row.memo_date ?? ""}</td>
-        <td>${row.invoice_no ?? ""}</td>
-        <td>${row.invoice_date ?? ""}</td>
-        <td>${row.receiving_status ?? ""}</td>
-        <td>${row.remarks ?? ""}</td>
-      `;
-
-      tableBody.appendChild(tr);
-    });
-  }
-
-  loadBillingData();
     async function logoutUser() {
-  const { error } = await supabaseClient.auth.signOut();
+      const { error } = await supabaseClient.auth.signOut();
 
-  if (error) {
-    alert("Logout failed: " + error.message);
-    return;
-  }
+      if (error) {
+        alert("Logout failed: " + error.message);
+        return;
+      }
 
-  window.location.href = "login.html";
-}
-</script>
+      window.location.href = "login.html";
+    }
+
+    window.onload = loadBillingData;
+  </script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
+      margin: 20px;
     }
-<button onclick="logoutUser()">Logout</button>
+
     table {
       border-collapse: collapse;
       width: 100%;
@@ -123,9 +127,17 @@
       position: sticky;
       top: 0;
     }
+
+    button {
+      padding: 10px 16px;
+      margin-bottom: 15px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
+  <button onclick="logoutUser()">Logout</button>
+
   <h2>Billing Details</h2>
 
   <table>
@@ -157,6 +169,7 @@
         <th>Remarks</th>
       </tr>
     </thead>
-    <tbody id="billing-table-body"></tbody>  </table>
+    <tbody id="billing-table-body"></tbody>
+  </table>
 </body>
 </html>
