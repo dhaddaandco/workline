@@ -147,18 +147,19 @@
   const updatedRow = updatedRows[0];
 
   const { error: logError } = await supabaseClient
-    .from("audit_logs")
-    .insert([
-      {
-        user_id: loggedInUser.id,
-        action: "update",
-        table_name: "billing_data",
-        row_id: rowId,
-        old_data: existingRow,
-        new_data: updatedRow
-      }
-    ]);
-
+  .from("audit_logs")
+  .insert([
+    {
+      user_id: loggedInUser.id,
+      user_email: loggedInUser.email,
+      action: "update",
+      table_name: "billing_data",
+      row_id: rowId,
+      old_data: existingRow,
+      new_data: updatedRow
+    }
+  ]);
+    
   if (logError) {
     console.log("Audit log update failed:", logError.message);
   }
@@ -240,6 +241,7 @@ const { error: logError } = await supabaseClient
   .insert([
     {
       user_id: loggedInUser.id,
+      user_email: loggedInUser.email,
       action: "insert",
       table_name: "billing_data",
       row_id: insertedRow.id,
@@ -247,7 +249,7 @@ const { error: logError } = await supabaseClient
       new_data: insertedRow
     }
   ]);
-
+    
 if (logError) {
   console.log("Audit log insert failed:", logError.message);
 }
