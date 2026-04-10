@@ -56,7 +56,9 @@
     data.forEach((row) => {
       const tr = document.createElement("tr");
 
+      tr.id = `billing-row-${row.id}`;
       tr.innerHTML = `
+        <td>${row.id ?? ""}</td>
         <td>${row.cost_center ?? ""}</td>
         <td>${row.person_authorised ?? ""}</td>
         <td>${row.voucher_type ?? ""}</td>
@@ -83,7 +85,7 @@
         <td>${row.remarks ?? ""}</td>
         <td><button type="button" onclick="editBillingRow(${row.id})">Edit</button></td>
       `;
-
+      highlightRowFromUrl();
       tableBody.appendChild(tr);
     });
   }
@@ -166,6 +168,24 @@
 
   alert("Row updated successfully");
   loadBillingData();
+}
+
+
+    function highlightRowFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const rowId = params.get("row_id");
+
+  if (!rowId) {
+    return;
+  }
+
+  const rowElement = document.getElementById(`billing-row-${rowId}`);
+
+  if (rowElement) {
+    rowElement.scrollIntoView({ behavior: "smooth", block: "center" });
+    rowElement.style.backgroundColor = "#fff3cd";
+    rowElement.style.outline = "2px solid #f0ad4e";
+  }
 }
     
   async function addBillingEntry() {
@@ -337,6 +357,7 @@ td:first-child {
   <table>
     <thead>
       <tr>
+        <th>Row ID</th>
         <th>Cost Center</th>
         <th>Person Authorised</th>
         <th>Voucher Type</th>
