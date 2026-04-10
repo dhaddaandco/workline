@@ -363,19 +363,35 @@ td:first-child {
     <h3 id="form-title">Add Billing Entry</h3>
 
     <div class="entry-form">
-      <input type="hidden" id="editing_row_id" />
+  <input type="hidden" id="editing_row_id" />
 
-      <input type="text" id="person_authorised" placeholder="Person Authorised" />
-      <input type="text" id="voucher_type" placeholder="Voucher Type" />
-      <input type="text" id="income_head" placeholder="Income Head" />
-      <input type="text" id="client" placeholder="Client" />
-      <input type="text" id="description" placeholder="Description" />
-      <input type="number" id="amount" placeholder="Amount" />
+  <input type="text" id="person_authorised" placeholder="Person Authorised" />
+  <input type="text" id="voucher_type" placeholder="Voucher Type" />
+  <input type="text" id="income_head" placeholder="Income Head" />
+  <input type="text" id="group_name" placeholder="Group" />
+  <input type="text" id="client" placeholder="Client" />
+  <input type="text" id="state" placeholder="State" />
+  <input type="text" id="gstin" placeholder="GSTIN" />
+  <input type="text" id="poc_name" placeholder="POC Name" />
+  <input type="text" id="poc_mobile" placeholder="POC Mobile" />
+  <input type="text" id="poc_email" placeholder="POC Email" />
+  <input type="text" id="description" placeholder="Description" />
+  <input type="number" id="amount" placeholder="Amount" />
+  <input type="number" id="cgst" placeholder="CGST" />
+  <input type="number" id="sgst" placeholder="SGST" />
+  <input type="number" id="igst" placeholder="IGST" />
+  <input type="number" id="total" placeholder="Total" />
+  <input type="text" id="billing_status" placeholder="Billing Status" />
+  <input type="text" id="memo_no" placeholder="Memo No." />
+  <input type="date" id="memo_date" placeholder="Memo Date" />
+  <input type="text" id="invoice_no" placeholder="Invoice No." />
+  <input type="date" id="invoice_date" placeholder="Invoice Date" />
+  <input type="text" id="receiving_status" placeholder="Receiving Status" />
+  <input type="text" id="remarks" placeholder="Remarks" />
 
-      <button type="button" id="save-button" onclick="saveBillingEntry()">Add Entry</button>
-      <button type="button" id="cancel-edit-button" onclick="resetBillingForm()" style="display: none;">Cancel Edit</button>
-    </div>
-  </div>
+  <button type="button" id="save-button" onclick="addBillingEntry()">Add Entry</button>
+  <button type="button" id="cancel-edit-button" onclick="resetBillingForm()" style="display: none;">Cancel Edit</button>
+</div>  </div>
 </div>
   <h2>Billing Details</h2>
   <table>
