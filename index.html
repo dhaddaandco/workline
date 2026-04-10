@@ -130,7 +130,7 @@
 
 th:first-child,
 td:first-child {
-  min-width: 120px;
+  min-width: 90px;
   white-space: nowrap;
 }
     button {
@@ -138,12 +138,35 @@ td:first-child {
       margin-bottom: 15px;
       cursor: pointer;
     }
+    .entry-form {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.entry-form input,
+.entry-form button {
+  padding: 10px;
+  font-size: 14px;
+}
   </style>
 </head>
 <body>
   <button onclick="logoutUser()">Logout</button>
 
   <h2>Billing Details</h2>
+  <h3>Add Billing Entry</h3>
+
+<div class="entry-form">
+  <input type="text" id="person_authorised" placeholder="Person Authorised" />
+  <input type="text" id="voucher_type" placeholder="Voucher Type" />
+  <input type="text" id="income_head" placeholder="Income Head" />
+  <input type="text" id="client" placeholder="Client" />
+  <input type="text" id="description" placeholder="Description" />
+  <input type="number" id="amount" placeholder="Amount" />
+  <button onclick="addBillingEntry()">Add Entry</button>
+</div>
 
   <table>
     <thead>
