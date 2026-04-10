@@ -128,8 +128,7 @@ function editBillingRow(rowId) {
 
   document.getElementById("billing-modal").style.display = "block";
 }
-  loadBillingData();
-}
+
 
   function resetBillingForm() {
   document.getElementById("editing_row_id").value = "";
@@ -355,7 +354,7 @@ td:first-child {
 <body>
   <button onclick="logoutUser()">Logout</button>
   <button type="button" onclick="window.location.href='logs.html'">View Logs</button>
-  <button type="button" onclick="openBillingModalForAdd()">Add Entry</button>
+  <button type="button" id="save-button" onclick="addBillingEntry()">Add Entry</button>
 
   <div id="billing-modal" class="modal" style="display: none;">
   <div class="modal-content">
