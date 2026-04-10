@@ -81,6 +81,7 @@
         <td>${row.invoice_date ?? ""}</td>
         <td>${row.receiving_status ?? ""}</td>
         <td>${row.remarks ?? ""}</td>
+        <td><button type="button" onclick="editBillingRow(${row.id})">Edit</button></td>
       `;
 
       tableBody.appendChild(tr);
@@ -98,6 +99,11 @@
     window.location.href = "login.html";
   }
 
+
+function editBillingRow(rowId) {
+  alert("Edit clicked for row ID: " + rowId);
+}
+    
   async function addBillingEntry() {
     console.log("Add Entry button clicked");
 
@@ -290,6 +296,7 @@ td:first-child {
         <th>Invoice Date</th>
         <th>Receiving Status</th>
         <th>Remarks</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody id="billing-table-body"></tbody>
