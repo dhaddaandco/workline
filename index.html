@@ -102,23 +102,65 @@
 
 
   async function editBillingRow(rowId) {
-  const newDescription = prompt("Enter new description:");
+  const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+
+  if (userError || !userData.user) {
+    alert("You must be logged in.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const loggedInUser = userData.user;
+
+  const { data: existingRow, error: fetchError } = await supabaseClient
+    .from("billing_data")
+    .select("*")
+    .eq("id", rowId)
+    .single();
+
+  if (fetchError) {
+    alert("Could not load row for editing.");
+    console.log(fetchError);
+    return;
+  }
+
+  const newDescription = prompt("Enter new description:", existingRow.description ?? "");
 
   if (newDescription === null) {
     return;
   }
 
-  const { error } = await supabaseClient
+  const { data: updatedRows, error: updateError } = await supabaseClient
     .from("billing_data")
     .update({
       description: newDescription
     })
-    .eq("id", rowId);
+    .eq("id", rowId)
+    .select();
 
-  if (error) {
-    alert("Update failed: " + error.message);
-    console.log(error);
+  if (updateError) {
+    alert("Update failed: " + updateError.message);
+    console.log(updateError);
     return;
+  }
+
+  const updatedRow = updatedRows[0];
+
+  const { error: logError } = await supabaseClient
+    .from("audit_logs")
+    .insert([
+      {
+        user_id: loggedInUser.id,
+        action: "update",
+        table_name: "billing_data",
+        row_id: rowId,
+        old_data: existingRow,
+        new_data: updatedRow
+      }
+    ]);
+
+  if (logError) {
+    console.log("Audit log update failed:", logError.message);
   }
 
   alert("Row updated successfully");
