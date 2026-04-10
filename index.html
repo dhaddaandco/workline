@@ -104,70 +104,30 @@
 
 
 
-  async function editBillingRow(rowId) {
-  const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+function editBillingRow(rowId) {
+  const rowElement = document.getElementById(`billing-row-${rowId}`);
 
-  if (userError || !userData.user) {
-    alert("You must be logged in.");
-    window.location.href = "login.html";
+  if (!rowElement) {
+    alert("Row not found.");
     return;
   }
 
-  const loggedInUser = userData.user;
+  const cells = rowElement.querySelectorAll("td");
 
-  const { data: existingRow, error: fetchError } = await supabaseClient
-    .from("billing_data")
-    .select("*")
-    .eq("id", rowId)
-    .single();
+  document.getElementById("editing_row_id").value = rowId;
+  document.getElementById("person_authorised").value = cells[2]?.textContent ?? "";
+  document.getElementById("voucher_type").value = cells[3]?.textContent ?? "";
+  document.getElementById("income_head").value = cells[4]?.textContent ?? "";
+  document.getElementById("client").value = cells[6]?.textContent ?? "";
+  document.getElementById("description").value = cells[12]?.textContent ?? "";
+  document.getElementById("amount").value = cells[13]?.textContent ?? "";
 
-  if (fetchError) {
-    alert("Could not load row for editing.");
-    console.log(fetchError);
-    return;
-  }
+  document.getElementById("form-title").textContent = "Edit Billing Entry";
+  document.getElementById("save-button").textContent = "Update Entry";
+  document.getElementById("cancel-edit-button").style.display = "inline-block";
 
-  const newDescription = prompt("Enter new description:", existingRow.description ?? "");
-
-  if (newDescription === null) {
-    return;
-  }
-
-  const { data: updatedRows, error: updateError } = await supabaseClient
-    .from("billing_data")
-    .update({
-      description: newDescription
-    })
-    .eq("id", rowId)
-    .select();
-
-  if (updateError) {
-    alert("Update failed: " + updateError.message);
-    console.log(updateError);
-    return;
-  }
-
-  const updatedRow = updatedRows[0];
-
-  const { error: logError } = await supabaseClient
-  .from("audit_logs")
-  .insert([
-    {
-      user_id: loggedInUser.id,
-      user_email: loggedInUser.email,
-      action: "update",
-      table_name: "billing_data",
-      row_id: rowId,
-      old_data: existingRow,
-      new_data: updatedRow
-    }
-  ]);
-    
-  if (logError) {
-    console.log("Audit log update failed:", logError.message);
-  }
-
-  alert("Row updated successfully");
+  document.getElementById("billing-modal").style.display = "block";
+}
   loadBillingData();
 }
 
