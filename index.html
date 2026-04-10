@@ -13,20 +13,63 @@
 
     const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  async function checkUser() {
-    const { data, error } = await supabaseClient.auth.getUser();
+  async function loadBillingData() {
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
 
-    if (error || !data.user) {
+    if (userError || !userData.user) {
       window.location.href = "login.html";
       return;
     }
 
-    console.log("Logged in user:", data.user);
+    const { data, error } = await supabaseClient
+      .from("billing_data")
+      .select("*")
+      .order("id", { ascending: true });
+
+    if (error) {
+      console.log("Error loading billing data:", error.message);
+      return;
+    }
+
+    const tableBody = document.getElementById("billing-table-body");
+    tableBody.innerHTML = "";
+
+    data.forEach((row) => {
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>${row.cost_center ?? ""}</td>
+        <td>${row.person_authorised ?? ""}</td>
+        <td>${row.voucher_type ?? ""}</td>
+        <td>${row.income_head ?? ""}</td>
+        <td>${row.group_name ?? ""}</td>
+        <td>${row.client ?? ""}</td>
+        <td>${row.state ?? ""}</td>
+        <td>${row.gstin ?? ""}</td>
+        <td>${row.poc_name ?? ""}</td>
+        <td>${row.poc_mobile ?? ""}</td>
+        <td>${row.poc_email ?? ""}</td>
+        <td>${row.description ?? ""}</td>
+        <td>${row.amount ?? ""}</td>
+        <td>${row.cgst ?? ""}</td>
+        <td>${row.sgst ?? ""}</td>
+        <td>${row.igst ?? ""}</td>
+        <td>${row.total ?? ""}</td>
+        <td>${row.billing_status ?? ""}</td>
+        <td>${row.memo_no ?? ""}</td>
+        <td>${row.memo_date ?? ""}</td>
+        <td>${row.invoice_no ?? ""}</td>
+        <td>${row.invoice_date ?? ""}</td>
+        <td>${row.receiving_status ?? ""}</td>
+        <td>${row.remarks ?? ""}</td>
+      `;
+
+      tableBody.appendChild(tr);
+    });
   }
 
-  checkUser();
+  loadBillingData();
 </script>
-
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -86,34 +129,6 @@
         <th>Remarks</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <td>CC001</td>
-        <td>John Doe</td>
-        <td>Sales</td>
-        <td>Consulting</td>
-        <td>A</td>
-        <td>ABC Pvt Ltd</td>
-        <td>Rajasthan</td>
-        <td>08ABCDE1234F1Z5</td>
-        <td>Rahul</td>
-        <td>9876543210</td>
-        <td>rahul@example.com</td>
-        <td>Service Charges</td>
-        <td>10000</td>
-        <td>900</td>
-        <td>900</td>
-        <td>0</td>
-        <td>11800</td>
-        <td>Pending</td>
-        <td>M001</td>
-        <td>01-04-2026</td>
-        <td>INV001</td>
-        <td>02-04-2026</td>
-        <td>Received</td>
-        <td>-</td>
-      </tr>
-    </tbody>
-  </table>
+    <tbody id="billing-table-body"></tbody>  </table>
 </body>
 </html>
