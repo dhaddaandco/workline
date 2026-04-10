@@ -101,7 +101,28 @@
 
 
 function editBillingRow(rowId) {
-  alert("Edit clicked for row ID: " + rowId);
+  async function editBillingRow(rowId) {
+  const newDescription = prompt("Enter new description:");
+
+  if (newDescription === null) {
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("billing_data")
+    .update({
+      description: newDescription
+    })
+    .eq("id", rowId);
+
+  if (error) {
+    alert("Update failed: " + error.message);
+    console.log(error);
+    return;
+  }
+
+  alert("Row updated successfully");
+  loadBillingData();
 }
     
   async function addBillingEntry() {
