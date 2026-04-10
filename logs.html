@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Audit Logs</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 12px;
+    }
+
+    button {
+      padding: 10px 16px;
+      margin-bottom: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <button onclick="window.location.href='index.html'">Back to Billing</button>
+
+  <h2>Audit Logs</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>User ID</th>
+        <th>Action</th>
+        <th>Table</th>
+        <th>Row ID</th>
+        <th>Old Data</th>
+        <th>New Data</th>
+        <th>Created At</th>
+      </tr>
+    </thead>
+    <tbody id="logs-table-body"></tbody>
+  </table>
+
+  <script>
+    const supabaseUrl = "https://mgkucaagzcllxnecirbi.supabase.co";
+    const supabaseKey = "YOUR_ANON_KEY_HERE";
+
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function loadLogs() {
+      const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+
+      if (userError || !userData.user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const { data, error } = await supabaseClient
+        .from("audit_logs")
+        .select("*")
+        .order("id", { ascending: false });
+
+      if (error) {
+        console.log("Error loading logs:", error.message);
+        return;
+      }
+
+      const tableBody = document.getElementById("logs-table-body");
+      tableBody.innerHTML = "";
+
+      data.forEach((row) => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${row.id ?? ""}</td>
+          <td>${row.user_id ?? ""}</td>
+          <td>${row.action ?? ""}</td>
+          <td>${row.table_name ?? ""}</td>
+          <td>${row.row_id ?? ""}</td>
+          <td><pre>${row.old_data ? JSON.stringify(row.old_data, null, 2) : ""}</pre></td>
+          <td><pre>${row.new_data ? JSON.stringify(row.new_data, null, 2) : ""}</pre></td>
+          <td>${row.created_at ?? ""}</td>
+        `;
+
+        tableBody.appendChild(tr);
+      });
+    }
+
+    loadLogs();
+  </script>
+</body>
+</html>
