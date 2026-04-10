@@ -56,7 +56,6 @@
   <th>ID</th>
   <th>Email</th>
   <th>Action</th>
-  <th>Table</th>
   <th>Row ID</th>
   <th>Changes</th>
   <th>Created At</th>
@@ -98,7 +97,6 @@
   <td>${row.id ?? ""}</td>
   <td>${row.user_email ?? row.user_id ?? ""}</td>
   <td>${row.action ?? ""}</td>
-  <td>${row.table_name ?? ""}</td>
   <td>${row.row_id ?? ""}</td>
   <td>${formatChanges(row.old_data, row.new_data)}</td>
   <td>${row.created_at ?? ""}</td>
