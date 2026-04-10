@@ -87,12 +87,22 @@
   }
 
   loadBillingData();
+    async function logoutUser() {
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    alert("Logout failed: " + error.message);
+    return;
+  }
+
+  window.location.href = "login.html";
+}
 </script>
   <style>
     body {
       font-family: Arial, sans-serif;
     }
-
+<button onclick="logoutUser()">Logout</button>
     table {
       border-collapse: collapse;
       width: 100%;
