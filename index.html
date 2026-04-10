@@ -171,14 +171,28 @@
   loadBillingData();
 }
 
-    function openBillingModalForAdd() {
+  function resetBillingForm() {
+  document.getElementById("editing_row_id").value = "";
+  document.getElementById("person_authorised").value = "";
+  document.getElementById("voucher_type").value = "";
+  document.getElementById("income_head").value = "";
+  document.getElementById("client").value = "";
+  document.getElementById("description").value = "";
+  document.getElementById("amount").value = "";
+
+  document.getElementById("form-title").textContent = "Add Billing Entry";
+  document.getElementById("save-button").textContent = "Add Entry";
+  document.getElementById("cancel-edit-button").style.display = "none";
+}
+
+function openBillingModalForAdd() {
+  resetBillingForm();
   document.getElementById("billing-modal").style.display = "block";
 }
 
 function closeBillingModal() {
   document.getElementById("billing-modal").style.display = "none";
 }
-
   function highlightRowFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const rowId = params.get("row_id");
