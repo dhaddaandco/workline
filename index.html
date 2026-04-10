@@ -171,7 +171,7 @@
 }
 
 
-    function highlightRowFromUrl() {
+  function highlightRowFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const rowId = params.get("row_id");
 
@@ -179,13 +179,17 @@
     return;
   }
 
-  const rowElement = document.getElementById(`billing-row-${rowId}`);
+  setTimeout(() => {
+    const rowElement = document.getElementById(`billing-row-${rowId}`);
 
-  if (rowElement) {
-    rowElement.scrollIntoView({ behavior: "smooth", block: "center" });
-    rowElement.style.backgroundColor = "#fff3cd";
-    rowElement.style.outline = "2px solid #f0ad4e";
-  }
+    if (rowElement) {
+      rowElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      rowElement.style.backgroundColor = "#fff3cd";
+      rowElement.style.outline = "2px solid #f0ad4e";
+    } else {
+      console.log("Row not found:", rowId);
+    }
+  }, 300);
 }
     
   async function addBillingEntry() {
