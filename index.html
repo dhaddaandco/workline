@@ -142,27 +142,46 @@
     const description = document.getElementById("description").value;
     const amount = document.getElementById("amount").value;
 
-    const { error: insertError } = await supabaseClient
-      .from("billing_data")
-      .insert([
-        {
-          team_id: appUser.team_id,
-          cost_center: teamData.team_name,
-          person_authorised: personAuthorised,
-          voucher_type: voucherType,
-          income_head: incomeHead,
-          client: client,
-          description: description,
-          amount: amount ? Number(amount) : null
-        }
-      ]);
-
-    if (insertError) {
-      alert("Insert failed: " + insertError.message);
-      console.log(insertError);
-      return;
+   const { data: insertedRows, error: insertError } = await supabaseClient
+  .from("billing_data")
+  .insert([
+    {
+      team_id: appUser.team_id,
+      cost_center: teamData.team_name,
+      person_authorised: personAuthorised,
+      voucher_type: voucherType,
+      income_head: incomeHead,
+      client: client,
+      description: description,
+      amount: amount ? Number(amount) : null
     }
+  ])
+  .select();
 
+if (insertError) {
+  alert("Insert failed: " + insertError.message);
+  console.log(insertError);
+  return;
+}
+
+const insertedRow = insertedRows[0];
+
+const { error: logError } = await supabaseClient
+  .from("audit_logs")
+  .insert([
+    {
+      user_id: loggedInUser.id,
+      action: "insert",
+      table_name: "billing_data",
+      row_id: insertedRow.id,
+      old_data: null,
+      new_data: insertedRow
+    }
+  ]);
+
+if (logError) {
+  console.log("Audit log insert failed:", logError.message);
+}
     alert("Entry added successfully");
 
     document.getElementById("person_authorised").value = "";
