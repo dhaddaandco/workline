@@ -95,6 +95,8 @@
         return;
       }
 async function addBillingEntry() {
+  console.log("Add Entry button clicked");
+
   const { data: userData, error: userError } = await supabaseClient.auth.getUser();
 
   if (userError || !userData.user) {
@@ -167,7 +169,7 @@ async function addBillingEntry() {
   document.getElementById("amount").value = "";
 
   loadBillingData();
-}
+} 
       window.location.href = "login.html";
     }
 
@@ -238,7 +240,7 @@ td:first-child {
   <input type="text" id="client" placeholder="Client" />
   <input type="text" id="description" placeholder="Description" />
   <input type="number" id="amount" placeholder="Amount" />
-  <button onclick="addBillingEntry()">Add Entry</button>
+  <button type="button" onclick="addBillingEntry()">Add Entry</button>
 </div>
 
   <table>
