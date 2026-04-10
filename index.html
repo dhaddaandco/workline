@@ -94,7 +94,80 @@
         alert("Logout failed: " + error.message);
         return;
       }
+async function addBillingEntry() {
+  const { data: userData, error: userError } = await supabaseClient.auth.getUser();
 
+  if (userError || !userData.user) {
+    alert("You must be logged in.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const loggedInUser = userData.user;
+
+  const { data: appUser, error: appUserError } = await supabaseClient
+    .from("app_users")
+    .select("role, team_id")
+    .eq("user_id", loggedInUser.id)
+    .single();
+
+  if (appUserError) {
+    alert("Could not load app user.");
+    console.log(appUserError);
+    return;
+  }
+
+  const { data: teamData, error: teamError } = await supabaseClient
+    .from("teams")
+    .select("team_name")
+    .eq("id", appUser.team_id)
+    .single();
+
+  if (teamError) {
+    alert("Could not load team name.");
+    console.log(teamError);
+    return;
+  }
+
+  const personAuthorised = document.getElementById("person_authorised").value;
+  const voucherType = document.getElementById("voucher_type").value;
+  const incomeHead = document.getElementById("income_head").value;
+  const client = document.getElementById("client").value;
+  const description = document.getElementById("description").value;
+  const amount = document.getElementById("amount").value;
+
+  const { error: insertError } = await supabaseClient
+    .from("billing_data")
+    .insert([
+      {
+        team_id: appUser.team_id,
+        cost_center: teamData.team_name,
+        person_authorised: personAuthorised,
+        voucher_type: voucherType,
+        income_head: incomeHead,
+        client: client,
+        description: description,
+        amount: amount ? Number(amount) : null
+      }
+    ]);
+
+  if (insertError) {
+    alert("Insert failed: " + insertError.message);
+    console.log(insertError);
+    return;
+  }
+
+  alert("Entry added successfully");
+
+  document.getElementById("person_authorised").value = "";
+  document.getElementById("voucher_type").value = "";
+  document.getElementById("income_head").value = "";
+  document.getElementById("client").value = "";
+  document.getElementById("description").value = "";
+  document.getElementById("amount").value = "";
+
+  loadBillingData();
+}
       window.location.href = "login.html";
     }
 
@@ -130,7 +203,7 @@
 
 th:first-child,
 td:first-child {
-  min-width: 90px;
+  min-width: 70px;
   white-space: nowrap;
 }
     button {
