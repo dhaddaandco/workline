@@ -94,7 +94,7 @@
         const tr = document.createElement("tr");
 
         tr.innerHTML = `
-  <td>${row.id ?? ""}</td>
+  <td><a href="index.html?row_id=${row.row_id}">${row.row_id ?? ""}</a></td>
   <td>${row.user_email ?? row.user_id ?? ""}</td>
   <td>${row.action ?? ""}</td>
   <td>${row.row_id ?? ""}</td>
