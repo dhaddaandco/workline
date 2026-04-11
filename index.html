@@ -14,13 +14,18 @@
      const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
   async function loadBillingData() {
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+    const { data, error } = await query;
 
-    if (userError || !userData.user) {
-      window.location.href = "login.html";
-      return;
-    }
+if (error) {
+  console.log("Error loading billing data:", error.message);
+  return;
+}
 
+const subtotalAmount = data.reduce((sum, row) => {
+  return sum + (Number(row.amount) || 0);
+}, 0);
+
+document.getElementById("amount-subtotal").textContent = subtotalAmount;
     const loggedInUser = userData.user;
 
     const { data: appUser, error: appUserError } = await supabaseClient
@@ -559,6 +564,21 @@ td:first-child {
   gap: 12px;
   margin-top: 10px;
 }
+    .heading-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.heading-row h2 {
+  margin: 0;
+}
+
+.amount-subtotal {
+  font-size: 18px;
+  font-weight: bold;
+}
   </style>
 </head>
 <body>
@@ -568,7 +588,10 @@ td:first-child {
     <button type="button" onclick="window.location.href='logs.html'">View Logs</button>
     <button type="button" onclick="openBillingModalForAdd()">Add Entry</button>
   </div>
+  <div class="heading-row">
   <h2>Billing Details</h2>
+  <div class="amount-subtotal">Subtotal Amount: <span id="amount-subtotal">0</span></div>
+</div>
 </div>
 
 <div class="table-wrapper">
