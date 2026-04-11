@@ -13,6 +13,9 @@
 
      const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+    let currentSortColumn = "id";
+let currentSortAscending = true;
+
   async function loadBillingData() {
   const { data: userData, error: userError } = await supabaseClient.auth.getUser();
 
@@ -35,10 +38,10 @@
   }
 
   let query = supabaseClient
-    .from("billing_data")
-    .select("*")
-    .order("id", { ascending: true });
-
+  .from("billing_data")
+  .select("*")
+  .order(currentSortColumn, { ascending: currentSortAscending });
+    
   if (appUser.role === "member") {
     query = query.eq("team_id", appUser.team_id);
   }
@@ -356,6 +359,16 @@ function closeBillingModal() {
       return;
     }
 
+    function setSort(columnName) {
+  if (currentSortColumn === columnName) {
+    currentSortAscending = !currentSortAscending;
+  } else {
+    currentSortColumn = columnName;
+    currentSortAscending = true;
+  }
+
+  loadBillingData();
+}
     
    const { data: insertedRows, error: insertError } = await supabaseClient
   .from("billing_data")
@@ -672,33 +685,33 @@ td:first-child {
   <table>
     <thead>
       <tr>
-        <th>Row ID</th>
-        <th>Cost Center</th>
-        <th>Person Authorised</th>
-        <th>Voucher Type</th>
-        <th>Income Head</th>
-        <th>Group</th>
-        <th>Client</th>
-        <th>State</th>
-        <th>GSTIN</th>
-        <th>POC Name</th>
-        <th>POC Mobile</th>
-        <th>POC Email</th>
-        <th>Description</th>
-        <th>Amount</th>
-        <th>CGST</th>
-        <th>SGST</th>
-        <th>IGST</th>
-        <th>Total</th>
-        <th>Billing Status</th>
-        <th>Memo No.</th>
-        <th>Memo Date</th>
-        <th>Invoice No.</th>
-        <th>Invoice Date</th>
-        <th>Receiving Status</th>
-        <th>Remarks</th>
-        <th>Actions</th>
-      </tr>
+  <th onclick="setSort('id')" style="cursor:pointer;">Row ID</th>
+  <th onclick="setSort('cost_center')" style="cursor:pointer;">Cost Center</th>
+  <th onclick="setSort('person_authorised')" style="cursor:pointer;">Person Authorised</th>
+  <th onclick="setSort('voucher_type')" style="cursor:pointer;">Voucher Type</th>
+  <th onclick="setSort('income_head')" style="cursor:pointer;">Income Head</th>
+  <th onclick="setSort('group_name')" style="cursor:pointer;">Group</th>
+  <th onclick="setSort('client')" style="cursor:pointer;">Client</th>
+  <th onclick="setSort('state')" style="cursor:pointer;">State</th>
+  <th onclick="setSort('gstin')" style="cursor:pointer;">GSTIN</th>
+  <th onclick="setSort('poc_name')" style="cursor:pointer;">POC Name</th>
+  <th onclick="setSort('poc_mobile')" style="cursor:pointer;">POC Mobile</th>
+  <th onclick="setSort('poc_email')" style="cursor:pointer;">POC Email</th>
+  <th onclick="setSort('description')" style="cursor:pointer;">Description</th>
+  <th onclick="setSort('amount')" style="cursor:pointer;">Amount</th>
+  <th onclick="setSort('cgst')" style="cursor:pointer;">CGST</th>
+  <th onclick="setSort('sgst')" style="cursor:pointer;">SGST</th>
+  <th onclick="setSort('igst')" style="cursor:pointer;">IGST</th>
+  <th onclick="setSort('total')" style="cursor:pointer;">Total</th>
+  <th onclick="setSort('billing_status')" style="cursor:pointer;">Billing Status</th>
+  <th onclick="setSort('memo_no')" style="cursor:pointer;">Memo No.</th>
+  <th onclick="setSort('memo_date')" style="cursor:pointer;">Memo Date</th>
+  <th onclick="setSort('invoice_no')" style="cursor:pointer;">Invoice No.</th>
+  <th onclick="setSort('invoice_date')" style="cursor:pointer;">Invoice Date</th>
+  <th onclick="setSort('receiving_status')" style="cursor:pointer;">Receiving Status</th>
+  <th onclick="setSort('remarks')" style="cursor:pointer;">Remarks</th>
+  <th>Actions</th>
+</tr>
     </thead>
     <tbody id="billing-table-body"></tbody>
   </table>
