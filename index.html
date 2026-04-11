@@ -487,6 +487,31 @@ td:first-child {
   font-size: 24px;
   cursor: pointer;
 }
+
+    .form-section {
+  margin-bottom: 22px;
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.section-title {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+}
+
+.entry-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
   </style>
 </head>
 <body>
@@ -503,34 +528,65 @@ td:first-child {
     <div class="entry-form">
   <input type="hidden" id="editing_row_id" />
 
-  <input type="text" id="person_authorised" placeholder="Person Authorised" />
-  <input type="text" id="voucher_type" placeholder="Voucher Type" />
-  <input type="text" id="income_head" placeholder="Income Head" />
-  <input type="text" id="group_name" placeholder="Group" />
-  <input type="text" id="client" placeholder="Client" />
-  <input type="text" id="state" placeholder="State" />
-  <input type="text" id="gstin" placeholder="GSTIN" />
-  <input type="text" id="poc_name" placeholder="POC Name" />
-  <input type="text" id="poc_mobile" placeholder="POC Mobile" />
-  <input type="text" id="poc_email" placeholder="POC Email" />
-  <input type="text" id="description" placeholder="Description" />
-  <input type="number" id="amount" placeholder="Amount" />
-  <input type="number" id="cgst" placeholder="CGST" />
-  <input type="number" id="sgst" placeholder="SGST" />
-  <input type="number" id="igst" placeholder="IGST" />
-  <input type="number" id="total" placeholder="Total" />
-  <input type="text" id="billing_status" placeholder="Billing Status" />
-  <input type="text" id="memo_no" placeholder="Memo No." />
-  <input type="date" id="memo_date" placeholder="Memo Date" />
-  <input type="text" id="invoice_no" placeholder="Invoice No." />
-  <input type="date" id="invoice_date" placeholder="Invoice Date" />
-  <input type="text" id="receiving_status" placeholder="Receiving Status" />
-  <input type="text" id="remarks" placeholder="Remarks" />
+  <div class="form-section">
+    <h4 class="section-title">Basic Details</h4>
+    <div class="entry-grid">
+      <input type="text" id="person_authorised" placeholder="Person Authorised" />
+      <input type="text" id="voucher_type" placeholder="Voucher Type" />
+      <input type="text" id="income_head" placeholder="Income Head" />
+      <input type="text" id="group_name" placeholder="Group" />
+      <input type="text" id="client" placeholder="Client" />
+      <input type="text" id="state" placeholder="State" />
+      <input type="text" id="gstin" placeholder="GSTIN" />
+      <input type="text" id="description" placeholder="Description" />
+    </div>
+  </div>
 
-  <button type="button" id="save-button" onclick="addBillingEntry()">Add Entry</button>
-  <button type="button" id="cancel-edit-button" onclick="resetBillingForm()" style="display: none;">Cancel Edit</button>
-</div>  </div>
+  <div class="form-section">
+    <h4 class="section-title">Contact Details</h4>
+    <div class="entry-grid">
+      <input type="text" id="poc_name" placeholder="POC Name" />
+      <input type="text" id="poc_mobile" placeholder="POC Mobile" />
+      <input type="text" id="poc_email" placeholder="POC Email" />
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h4 class="section-title">Tax & Amount</h4>
+    <div class="entry-grid">
+      <input type="number" id="amount" placeholder="Amount" />
+      <input type="number" id="cgst" placeholder="CGST" />
+      <input type="number" id="sgst" placeholder="SGST" />
+      <input type="number" id="igst" placeholder="IGST" />
+      <input type="number" id="total" placeholder="Total" />
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h4 class="section-title">Billing / Invoice</h4>
+    <div class="entry-grid">
+      <input type="text" id="billing_status" placeholder="Billing Status" />
+      <input type="text" id="memo_no" placeholder="Memo No." />
+      <input type="date" id="memo_date" />
+      <input type="text" id="invoice_no" placeholder="Invoice No." />
+      <input type="date" id="invoice_date" />
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h4 class="section-title">Status & Remarks</h4>
+    <div class="entry-grid">
+      <input type="text" id="receiving_status" placeholder="Receiving Status" />
+      <input type="text" id="remarks" placeholder="Remarks" />
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="button" id="save-button" onclick="saveBillingEntry()">Add Entry</button>
+    <button type="button" id="cancel-edit-button" onclick="resetBillingForm()" style="display: none;">Cancel Edit</button>
+  </div>
 </div>
+    
   <h2>Billing Details</h2>
   <table>
     <thead>
