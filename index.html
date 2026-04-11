@@ -443,15 +443,27 @@ resetBillingForm();
   border-bottom: 1px solid #ddd;
 }
 
+.top-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
 .sticky-top-bar h2 {
-  margin: 10px 0 0 0;
+  margin: 0;
+}
+
+.table-wrapper {
+  max-height: calc(100vh - 170px);
+  overflow: auto;
+  border: 1px solid #ddd;
+  margin-top: 10px;
 }
 
 table {
   border-collapse: collapse;
-  width: 100%;
-  overflow-x: auto;
-  display: block;
+  min-width: 100%;
+  width: max-content;
 }
 
 th,
@@ -462,10 +474,10 @@ td {
   font-size: 14px;
 }
 
-th {
+thead th {
   background-color: #f4f4f4;
   position: sticky;
-  top: 70px;
+  top: 0;
   z-index: 800;
 }
 
@@ -546,10 +558,16 @@ td:first-child {
 </head>
 <body>
   <div class="sticky-top-bar">
-  <button onclick="logoutUser()">Logout</button>
-  <button type="button" onclick="window.location.href='logs.html'">View Logs</button>
-  <button type="button" onclick="openBillingModalForAdd()">Add Entry</button>
+  <div class="top-buttons">
+    <button onclick="logoutUser()">Logout</button>
+    <button type="button" onclick="window.location.href='logs.html'">View Logs</button>
+    <button type="button" onclick="openBillingModalForAdd()">Add Entry</button>
   </div>
+  <h2>Billing Details</h2>
+</div>
+
+<div class="table-wrapper">
+  <table>
   
   <div id="billing-modal" class="modal" style="display: none;">
   <div class="modal-content">
@@ -656,5 +674,6 @@ td:first-child {
     </thead>
     <tbody id="billing-table-body"></tbody>
   </table>
+    </div>
 </body>
 </html>
