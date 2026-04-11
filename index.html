@@ -133,10 +133,82 @@ function saveBillingEntry() {
   const editingRowId = document.getElementById("editing_row_id").value;
 
   if (editingRowId) {
-    alert("Edit mode detected for row ID: " + editingRowId);
+    updateBillingEntry(editingRowId);
   } else {
     addBillingEntry();
   }
+}
+
+    async function updateBillingEntry(rowId) {
+  const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+
+  if (userError || !userData.user) {
+    alert("You must be logged in.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const loggedInUser = userData.user;
+
+  const { data: existingRow, error: fetchError } = await supabaseClient
+    .from("billing_data")
+    .select("*")
+    .eq("id", rowId)
+    .single();
+
+  if (fetchError) {
+    alert("Could not load row for updating.");
+    console.log(fetchError);
+    return;
+  }
+
+  const updatedData = {
+    person_authorised: document.getElementById("person_authorised").value,
+    voucher_type: document.getElementById("voucher_type").value,
+    income_head: document.getElementById("income_head").value,
+    client: document.getElementById("client").value,
+    description: document.getElementById("description").value,
+    amount: document.getElementById("amount").value
+      ? Number(document.getElementById("amount").value)
+      : null
+  };
+
+  const { data: updatedRows, error: updateError } = await supabaseClient
+    .from("billing_data")
+    .update(updatedData)
+    .eq("id", rowId)
+    .select();
+
+  if (updateError) {
+    alert("Update failed: " + updateError.message);
+    console.log(updateError);
+    return;
+  }
+
+  const updatedRow = updatedRows[0];
+
+  const { error: logError } = await supabaseClient
+    .from("audit_logs")
+    .insert([
+      {
+        user_id: loggedInUser.id,
+        user_email: loggedInUser.email,
+        action: "update",
+        table_name: "billing_data",
+        row_id: Number(rowId),
+        old_data: existingRow,
+        new_data: updatedRow
+      }
+    ]);
+
+  if (logError) {
+    console.log("Audit log update failed:", logError.message);
+  }
+
+  alert("Row updated successfully");
+  closeBillingModal();
+  resetBillingForm();
+  loadBillingData();
 }
     
   function resetBillingForm() {
