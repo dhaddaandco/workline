@@ -115,12 +115,30 @@ function editBillingRow(rowId) {
   const cells = rowElement.querySelectorAll("td");
 
   document.getElementById("editing_row_id").value = rowId;
+
   document.getElementById("person_authorised").value = cells[2]?.textContent ?? "";
   document.getElementById("voucher_type").value = cells[3]?.textContent ?? "";
   document.getElementById("income_head").value = cells[4]?.textContent ?? "";
+  document.getElementById("group_name").value = cells[5]?.textContent ?? "";
   document.getElementById("client").value = cells[6]?.textContent ?? "";
+  document.getElementById("state").value = cells[7]?.textContent ?? "";
+  document.getElementById("gstin").value = cells[8]?.textContent ?? "";
+  document.getElementById("poc_name").value = cells[9]?.textContent ?? "";
+  document.getElementById("poc_mobile").value = cells[10]?.textContent ?? "";
+  document.getElementById("poc_email").value = cells[11]?.textContent ?? "";
   document.getElementById("description").value = cells[12]?.textContent ?? "";
   document.getElementById("amount").value = cells[13]?.textContent ?? "";
+  document.getElementById("cgst").value = cells[14]?.textContent ?? "";
+  document.getElementById("sgst").value = cells[15]?.textContent ?? "";
+  document.getElementById("igst").value = cells[16]?.textContent ?? "";
+  document.getElementById("total").value = cells[17]?.textContent ?? "";
+  document.getElementById("billing_status").value = cells[18]?.textContent ?? "";
+  document.getElementById("memo_no").value = cells[19]?.textContent ?? "";
+  document.getElementById("memo_date").value = cells[20]?.textContent ?? "";
+  document.getElementById("invoice_no").value = cells[21]?.textContent ?? "";
+  document.getElementById("invoice_date").value = cells[22]?.textContent ?? "";
+  document.getElementById("receiving_status").value = cells[23]?.textContent ?? "";
+  document.getElementById("remarks").value = cells[24]?.textContent ?? "";
 
   document.getElementById("form-title").textContent = "Edit Billing Entry";
   document.getElementById("save-button").textContent = "Update Entry";
@@ -128,7 +146,6 @@ function editBillingRow(rowId) {
 
   document.getElementById("billing-modal").style.display = "block";
 }
-
 function saveBillingEntry() {
   const editingRowId = document.getElementById("editing_row_id").value;
 
