@@ -180,16 +180,40 @@ function saveBillingEntry() {
   }
 
   const updatedData = {
-    person_authorised: document.getElementById("person_authorised").value,
-    voucher_type: document.getElementById("voucher_type").value,
-    income_head: document.getElementById("income_head").value,
-    client: document.getElementById("client").value,
-    description: document.getElementById("description").value,
-    amount: document.getElementById("amount").value
-      ? Number(document.getElementById("amount").value)
-      : null
-  };
-
+  person_authorised: document.getElementById("person_authorised").value,
+  voucher_type: document.getElementById("voucher_type").value,
+  income_head: document.getElementById("income_head").value,
+  group_name: document.getElementById("group_name").value,
+  client: document.getElementById("client").value,
+  state: document.getElementById("state").value,
+  gstin: document.getElementById("gstin").value,
+  poc_name: document.getElementById("poc_name").value,
+  poc_mobile: document.getElementById("poc_mobile").value,
+  poc_email: document.getElementById("poc_email").value,
+  description: document.getElementById("description").value,
+  amount: document.getElementById("amount").value
+    ? Number(document.getElementById("amount").value)
+    : null,
+  cgst: document.getElementById("cgst").value
+    ? Number(document.getElementById("cgst").value)
+    : null,
+  sgst: document.getElementById("sgst").value
+    ? Number(document.getElementById("sgst").value)
+    : null,
+  igst: document.getElementById("igst").value
+    ? Number(document.getElementById("igst").value)
+    : null,
+  total: document.getElementById("total").value
+    ? Number(document.getElementById("total").value)
+    : null,
+  billing_status: document.getElementById("billing_status").value,
+  memo_no: document.getElementById("memo_no").value,
+  memo_date: document.getElementById("memo_date").value || null,
+  invoice_no: document.getElementById("invoice_no").value,
+  invoice_date: document.getElementById("invoice_date").value || null,
+  receiving_status: document.getElementById("receiving_status").value,
+  remarks: document.getElementById("remarks").value
+};
   const { data: updatedRows, error: updateError } = await supabaseClient
     .from("billing_data")
     .update(updatedData)
@@ -326,13 +350,7 @@ function closeBillingModal() {
       return;
     }
 
-    const personAuthorised = document.getElementById("person_authorised").value;
-    const voucherType = document.getElementById("voucher_type").value;
-    const incomeHead = document.getElementById("income_head").value;
-    const client = document.getElementById("client").value;
-    const description = document.getElementById("description").value;
-    const amount = document.getElementById("amount").value;
-
+    
    const { data: insertedRows, error: insertError } = await supabaseClient
   .from("billing_data")
   .insert([
@@ -448,9 +466,7 @@ td:first-child {
       cursor: pointer;
     }
     .entry-form {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  display: block;
   margin-bottom: 20px;
 }
 
