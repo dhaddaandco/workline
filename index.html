@@ -129,7 +129,16 @@ function editBillingRow(rowId) {
   document.getElementById("billing-modal").style.display = "block";
 }
 
+function saveBillingEntry() {
+  const editingRowId = document.getElementById("editing_row_id").value;
 
+  if (editingRowId) {
+    alert("Edit mode detected for row ID: " + editingRowId);
+  } else {
+    addBillingEntry();
+  }
+}
+    
   function resetBillingForm() {
   document.getElementById("editing_row_id").value = "";
 
