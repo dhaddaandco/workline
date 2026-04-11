@@ -430,29 +430,43 @@ resetBillingForm();
 </script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
 
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      overflow-x: auto;
-      display: block;
-    }
-
-    th,
-    td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: left;
-      font-size: 14px;
-    }
-
-    th {
-  background-color: #f4f4f4;
+.sticky-top-bar {
   position: sticky;
   top: 0;
+  background: white;
+  z-index: 900;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.sticky-top-bar h2 {
+  margin: 10px 0 0 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  background-color: #f4f4f4;
+  position: sticky;
+  top: 70px;
+  z-index: 800;
 }
 
 th:first-child,
@@ -531,9 +545,11 @@ td:first-child {
   </style>
 </head>
 <body>
+  <div class="sticky-top-bar">
   <button onclick="logoutUser()">Logout</button>
   <button type="button" onclick="window.location.href='logs.html'">View Logs</button>
   <button type="button" onclick="openBillingModalForAdd()">Add Entry</button>
+  </div>
   
   <div id="billing-modal" class="modal" style="display: none;">
   <div class="modal-content">
