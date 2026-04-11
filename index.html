@@ -14,53 +14,54 @@
      const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
   async function loadBillingData() {
-    const { data, error } = await query;
+  const { data: userData, error: userError } = await supabaseClient.auth.getUser();
 
-if (error) {
-  console.log("Error loading billing data:", error.message);
-  return;
-}
+  if (userError || !userData.user) {
+    window.location.href = "login.html";
+    return;
+  }
 
-const subtotalAmount = data.reduce((sum, row) => {
-  return sum + (Number(row.amount) || 0);
-}, 0);
+  const loggedInUser = userData.user;
 
-document.getElementById("amount-subtotal").textContent = subtotalAmount;
-    const loggedInUser = userData.user;
+  const { data: appUser, error: appUserError } = await supabaseClient
+    .from("app_users")
+    .select("role, team_id")
+    .eq("user_id", loggedInUser.id)
+    .single();
 
-    const { data: appUser, error: appUserError } = await supabaseClient
-      .from("app_users")
-      .select("role, team_id")
-      .eq("user_id", loggedInUser.id)
-      .single();
+  if (appUserError) {
+    console.log("Error loading app user:", appUserError.message);
+    return;
+  }
 
-    if (appUserError) {
-      console.log("Error loading app user:", appUserError.message);
-      return;
-    }
+  let query = supabaseClient
+    .from("billing_data")
+    .select("*")
+    .order("id", { ascending: true });
 
-    let query = supabaseClient
-      .from("billing_data")
-      .select("*")
-      .order("id", { ascending: true });
+  if (appUser.role === "member") {
+    query = query.eq("team_id", appUser.team_id);
+  }
 
-    if (appUser.role === "member") {
-      query = query.eq("team_id", appUser.team_id);
-    }
+  const { data, error } = await query;
 
-    const { data, error } = await query;
+  if (error) {
+    console.log("Error loading billing data:", error.message);
+    return;
+  }
 
-    if (error) {
-      console.log("Error loading billing data:", error.message);
-      return;
-    }
+  const subtotalAmount = data.reduce((sum, row) => {
+    return sum + (Number(row.amount) || 0);
+  }, 0);
 
-    const tableBody = document.getElementById("billing-table-body");
-    tableBody.innerHTML = "";
+  document.getElementById("amount-subtotal").textContent = subtotalAmount;
 
-    data.forEach((row) => {
-      const tr = document.createElement("tr");
+  const tableBody = document.getElementById("billing-table-body");
+  tableBody.innerHTML = "";
 
+  data.forEach((row) => {
+    const tr = document.createElement("tr");
+    
       tr.id = `billing-row-${row.id}`;
       tr.innerHTML = `
         <td>${row.id ?? ""}</td>
@@ -595,8 +596,7 @@ td:first-child {
 </div>
 
 <div class="table-wrapper">
-  <table>
-  
+    
   <div id="billing-modal" class="modal" style="display: none;">
   <div class="modal-content">
     <span class="close-button" onclick="closeBillingModal()">&times;</span>
