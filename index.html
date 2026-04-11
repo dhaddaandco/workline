@@ -16,6 +16,17 @@
     let currentSortColumn = "id";
 let currentSortAscending = true;
 
+    function setSort(columnName) {
+  if (currentSortColumn === columnName) {
+    currentSortAscending = !currentSortAscending;
+  } else {
+    currentSortColumn = columnName;
+    currentSortAscending = true;
+  }
+
+  loadBillingData();
+}
+
   async function loadBillingData() {
   const { data: userData, error: userError } = await supabaseClient.auth.getUser();
 
@@ -359,16 +370,7 @@ function closeBillingModal() {
       return;
     }
 
-    function setSort(columnName) {
-  if (currentSortColumn === columnName) {
-    currentSortAscending = !currentSortAscending;
-  } else {
-    currentSortColumn = columnName;
-    currentSortAscending = true;
-  }
-
-  loadBillingData();
-}
+    
     
    const { data: insertedRows, error: insertError } = await supabaseClient
   .from("billing_data")
