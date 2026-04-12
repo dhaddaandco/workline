@@ -12,7 +12,7 @@ let selectedUserData = null;
 let selectedUserId = null;
 
     function resetUserForm() {
-  document.getElementById("editing_user_email").value = "";
+  document.getElementById("editing_user_id").value = "";
   document.getElementById("user_email").value = "";
   document.getElementById("user_team").value = "";
   document.getElementById("user_role").value = "member";
@@ -23,6 +23,7 @@ let selectedUserId = null;
 
 function openUserModalForAdd() {
   resetUserForm();
+ 
   document.getElementById("user-modal").style.display = "block";
 }
     async function loadTeamsIntoUserDropdown() {
@@ -268,7 +269,7 @@ function deactivateSelectedUser() {
     <h3 id="user-form-title">Add User</h3>
 
     <div class="user-form">
-      document.getElementById("editing_user_id").value = "";
+      <input type="hidden" id="editing_user_id" />
       <label>Email</label>
       <input type="email" id="user_email" placeholder="Email" />
 
