@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Users</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    .top-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    .status-active {
+      color: green;
+      font-weight: bold;
+    }
+
+    .status-inactive {
+      color: #b42318;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <button onclick="window.location.href='index.html'">Back to Billing</button>
+  </div>
+
+  <h2>Users</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Team</th>
+        <th>Role</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="users-table-body"></tbody>
+  </table>
+
+  <script>
+    const supabaseUrl = "https://mgkucaagzcllxnecirbi.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1na3VjYWFnemNsbHhuZWNpcmJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjU1OTcsImV4cCI6MjA5MTMwMTU5N30.pzhesD0POzMnZSRrXFHp33mCh94GsdpQW2ieVeWca1g";
+
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function loadUsersPage() {
+      const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+
+      if (userError || !userData.user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const loggedInUser = userData.user;
+
+      const { data: appUser, error: appUserError } = await supabaseClient
+        .from("app_users")
+        .select("role")
+        .eq("user_id", loggedInUser.id)
+        .single();
+
+      if (appUserError || !appUser) {
+        alert("Could not load your role.");
+        return;
+      }
+
+      if (appUser.role !== "admin") {
+        alert("Access denied. Admin only.");
+        window.location.href = "index.html";
+        return;
+      }
+
+      const { data: teamsData, error: teamsError } = await supabaseClient
+        .from("teams")
+        .select("id, team_name");
+
+      if (teamsError) {
+        alert("Could not load teams.");
+        console.log(teamsError);
+        return;
+      }
+
+      const teamMap = {};
+      teamsData.forEach((team) => {
+        teamMap[team.id] = team.team_name;
+      });
+
+      const { data: usersData, error: usersError } = await supabaseClient
+        .from("app_users")
+        .select("email, team_id, role, status")
+        .order("email", { ascending: true });
+
+      if (usersError) {
+        alert("Could not load users.");
+        console.log(usersError);
+        return;
+      }
+
+      const tableBody = document.getElementById("users-table-body");
+      tableBody.innerHTML = "";
+
+      usersData.forEach((user) => {
+        const tr = document.createElement("tr");
+
+        const teamName = teamMap[user.team_id] || "";
+
+        tr.innerHTML = `
+          <td>${user.email ?? ""}</td>
+          <td>${teamName}</td>
+          <td>${user.role ?? ""}</td>
+          <td class="${user.status === 'inactive' ? 'status-inactive' : 'status-active'}">
+            ${user.status ?? ""}
+          </td>
+        `;
+
+        tableBody.appendChild(tr);
+      });
+    }
+
+    loadUsersPage();
+  </script>
+</body>
+</html>
