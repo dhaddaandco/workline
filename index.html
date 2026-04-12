@@ -83,9 +83,11 @@ let currentSortAscending = true;
   <button type="button" class="edit-icon-btn" onclick="editBillingRow(${row.id})" title="Edit">
     ✏️
   </button>
-  <button type="button" class="delete-icon-btn" onclick="deleteBillingRow(${row.id})" title="Delete">
-    🗑️
-  </button>
+  <button type="button" class="delete-icon-btn" onclick="deleteBillingRow(${row.id})" title="Delete" aria-label="Delete">
+  <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+    <path d="M9 3h6l1 2h4v2H4V5h4l1-2zm1 6h2v8h-2V9zm4 0h2v8h-2V9zM7 9h2v8H7V9z" fill="currentColor"></path>
+  </svg>
+</button>
 </td>
     `;
 
@@ -766,6 +768,36 @@ td:first-child {
 
 .delete-icon-btn:hover {
   background: #f8d7da;
+}
+    .delete-icon-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  background: white;
+  color: #b42318;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.delete-icon-btn:hover {
+  background: #fef3f2;
+  border-color: #fda29b;
+  color: #d92d20;
+}
+
+.delete-icon-btn:active {
+  transform: scale(0.96);
+}
+    .action-cell {
+  display: flex;
+  gap: 6px;
+  align-items: center;
 }
   </style>
 </head>
