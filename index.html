@@ -578,13 +578,20 @@ td {
   font-size: 14px;
 }
 
-thead th {
+thead tr:nth-child(1) th {
   background-color: #f4f4f4;
   position: sticky;
   top: 0;
-  z-index: 800;
+  z-index: 801;
 }
 
+thead tr:nth-child(2) th {
+  background-color: #f4f4f4;
+  position: sticky;
+  top: 42px;
+  z-index: 800;
+}
+    
 th:first-child,
 td:first-child {
   min-width: 40px;
@@ -679,13 +686,16 @@ td:first-child {
   font-weight: bold;
 }
     .filter-input {
-  width: 60px;
-  max-width: 100%;
+  width: 100%;
   box-sizing: border-box;
-  padding: 4px 6px;
+  padding: 6px 8px;
   font-size: 12px;
   height: 30px;
     }
+
+    thead tr:nth-child(2) th {
+  padding: 4px;
+}
     tbody td {
   padding: 2px 6px;
   line-height: 1.1;
