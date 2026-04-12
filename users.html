@@ -6,7 +6,7 @@
   <title>Users</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script
+  <script>
     let selectedUserEmail = null;
 
 function selectUserRow(email, rowElement) {
@@ -46,6 +46,9 @@ function deactivateSelectedUser() {
   </script>
 
   <style>
+    #users-table-body tr {
+  cursor: pointer;
+}
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
