@@ -44,22 +44,27 @@ function openUserModalForAdd() {
 }
 
 function openUserModalForEdit() {
-  if (!selectedUserEmail) {
+  if (!selectedUserData) {
     alert("Please select a user first.");
     return;
   }
 
+  document.getElementById("editing_user_email").value = selectedUserData.email || "";
+  document.getElementById("user_email").value = selectedUserData.email || "";
+  document.getElementById("user_team").value = selectedUserData.team_id || "";
+  document.getElementById("user_role").value = selectedUserData.role || "member";
+  document.getElementById("user_status").value = selectedUserData.status || "active";
+
   document.getElementById("user-form-title").textContent = "Edit User";
   document.getElementById("user-modal").style.display = "block";
 }
-
 function closeUserModal() {
   document.getElementById("user-modal").style.display = "none";
+  resetUserForm();
 }
-    let selectedUserEmail = null;
-
-function selectUserRow(email, rowElement) {
-  selectedUserEmail = email;
+function selectUserRow(user, rowElement) {
+  selectedUserEmail = user.email;
+  selectedUserData = user;
 
   document.querySelectorAll("#users-table-body tr").forEach((tr) => {
     tr.classList.remove("selected-user-row");
@@ -68,9 +73,7 @@ function selectUserRow(email, rowElement) {
   rowElement.classList.add("selected-user-row");
 
   document.getElementById("edit-user-button").disabled = false;
-  document.getElementById("deactivate-user-button").disabled = false;
 }
-
 function openAddUserModal() {
   alert("Next step: Add User modal");
 }
@@ -91,6 +94,45 @@ function deactivateSelectedUser() {
   }
 
   alert("Next step: Deactivate user " + selectedUserEmail);
+}
+    function saveUser() {
+  const editingUserEmail = document.getElementById("editing_user_email").value;
+
+  if (editingUserEmail) {
+    updateExistingUser();
+  } else {
+    alert("Add User save will be connected next through a secure backend / Edge Function.");
+  }
+}
+    async function updateExistingUser() {
+  const editingUserEmail = document.getElementById("editing_user_email").value;
+
+  if (!editingUserEmail) {
+    alert("No user selected for editing.");
+    return;
+  }
+
+  const updatedData = {
+    email: document.getElementById("user_email").value,
+    team_id: document.getElementById("user_team").value ? Number(document.getElementById("user_team").value) : null,
+    role: document.getElementById("user_role").value,
+    status: document.getElementById("user_status").value
+  };
+
+  const { error } = await supabaseClient
+    .from("app_users")
+    .update(updatedData)
+    .eq("email", editingUserEmail);
+
+  if (error) {
+    alert("Update failed: " + error.message);
+    console.log(error);
+    return;
+  }
+
+  alert("User updated successfully");
+  closeUserModal();
+  loadUsersPage();
 }
   </script>
 
@@ -237,7 +279,7 @@ function deactivateSelectedUser() {
       </select>
 
       <div class="user-form-actions">
-        <button type="button" id="user-save-button">Save</button>
+        <button type="button" id="user-save-button" onclick="saveUser()">Save</button>
         <button type="button" onclick="closeUserModal()">Cancel</button>
       </div>
     </div>
@@ -331,7 +373,7 @@ function deactivateSelectedUser() {
           </td>
         `;
         tr.onclick = function () {
-  selectUserRow(user.email, tr);
+  selectUserRow(user, tr);
 };
         tableBody.appendChild(tr);
       });
