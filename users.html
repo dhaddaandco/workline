@@ -5,7 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Users</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js">
+    let selectedUserEmail = null;
+
+function selectUserRow(email, rowElement) {
+  selectedUserEmail = email;
+
+  document.querySelectorAll("#users-table-body tr").forEach((tr) => {
+    tr.classList.remove("selected-user-row");
+  });
+
+  rowElement.classList.add("selected-user-row");
+
+  document.getElementById("edit-user-button").disabled = false;
+  document.getElementById("deactivate-user-button").disabled = false;
+}
+
+function openAddUserModal() {
+  alert("Next step: Add User modal");
+}
+
+function openEditUserModal() {
+  if (!selectedUserEmail) {
+    alert("Please select a user first.");
+    return;
+  }
+
+  alert("Next step: Edit user " + selectedUserEmail);
+}
+
+function deactivateSelectedUser() {
+  if (!selectedUserEmail) {
+    alert("Please select a user first.");
+    return;
+  }
+
+  alert("Next step: Deactivate user " + selectedUserEmail);
+}
+  </script>
 
   <style>
     body {
@@ -45,6 +82,15 @@
       color: #b42318;
       font-weight: bold;
     }
+    .users-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.selected-user-row {
+  background-color: #fff3cd;
+}
   </style>
 </head>
 <body>
@@ -53,6 +99,11 @@
   </div>
 
   <h2>Users</h2>
+  <div class="users-actions">
+  <button type="button" onclick="openAddUserModal()">Add User</button>
+  <button type="button" id="edit-user-button" onclick="openEditUserModal()" disabled>Edit Selected</button>
+  <button type="button" id="deactivate-user-button" onclick="deactivateSelectedUser()" disabled>Deactivate Selected</button>
+</div>
 
   <table>
     <thead>
@@ -141,7 +192,9 @@
             ${user.status ?? ""}
           </td>
         `;
-
+        tr.onclick = function () {
+  selectUserRow(user.email, tr);
+};
         tableBody.appendChild(tr);
       });
     }
