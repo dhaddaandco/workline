@@ -152,44 +152,7 @@ let currentSortAscending = true;
   allBillingData = data;
 applyFilters();
     
-  data.forEach((row) => {
-    const tr = document.createElement("tr");
-    
-      tr.id = `billing-row-${row.id}`;
-      tr.innerHTML = `
-        <td>${row.id ?? ""}</td>
-        <td>${row.cost_center ?? ""}</td>
-        <td>${row.person_authorised ?? ""}</td>
-        <td>${row.voucher_type ?? ""}</td>
-        <td>${row.income_head ?? ""}</td>
-        <td>${row.group_name ?? ""}</td>
-        <td>${row.client ?? ""}</td>
-        <td>${row.state ?? ""}</td>
-        <td>${row.gstin ?? ""}</td>
-        <td>${row.poc_name ?? ""}</td>
-        <td>${row.poc_mobile ?? ""}</td>
-        <td>${row.poc_email ?? ""}</td>
-        <td>${row.description ?? ""}</td>
-        <td>${row.amount ?? ""}</td>
-        <td>${row.cgst ?? ""}</td>
-        <td>${row.sgst ?? ""}</td>
-        <td>${row.igst ?? ""}</td>
-        <td>${row.total ?? ""}</td>
-        <td>${row.billing_status ?? ""}</td>
-        <td>${row.memo_no ?? ""}</td>
-        <td>${row.memo_date ?? ""}</td>
-        <td>${row.invoice_no ?? ""}</td>
-        <td>${row.invoice_date ?? ""}</td>
-        <td>${row.receiving_status ?? ""}</td>
-        <td>${row.remarks ?? ""}</td>
-        <td><button type="button" onclick="editBillingRow(${row.id})">Edit</button></td>
-      `;
-      tableBody.appendChild(tr);
-    });
-    
-      highlightRowFromUrl();
-  }
-
+  
   async function logoutUser() {
     const { error } = await supabaseClient.auth.signOut();
 
@@ -687,6 +650,7 @@ td:first-child {
 }
     .filter-input {
   width: 100%;
+  min-width: 0;    
   box-sizing: border-box;
   padding: 6px 8px;
   font-size: 12px;
@@ -819,6 +783,7 @@ td:first-child {
   <th data-sort="receiving_status" onclick="setSort('receiving_status')" style="cursor:pointer;">Receiving Status <span class="sort-arrow"></span></th>
   <th data-sort="remarks" onclick="setSort('remarks')" style="cursor:pointer;">Remarks <span class="sort-arrow"></span></th>
   <th>Actions</th>
+      </tr>
         <tr>
   <th><input class="filter-input" data-column="id" oninput="applyFilters()" placeholder="Filter" /></th>
   <th><input class="filter-input" data-column="cost_center" oninput="applyFilters()" placeholder="Filter" /></th>
