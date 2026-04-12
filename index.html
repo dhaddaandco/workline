@@ -137,6 +137,12 @@ let currentSortAscending = true;
     .eq("user_id", loggedInUser.id)
     .single();
 
+    if (appUser.role === "admin") {
+  document.getElementById("users-button").style.display = "inline-block";
+} else {
+  document.getElementById("users-button").style.display = "none";
+}
+
   if (appUserError) {
     console.log("Error loading app user:", appUserError.message);
     return;
@@ -807,6 +813,9 @@ td:first-child {
     <button onclick="logoutUser()">Logout</button>
     <button type="button" onclick="window.location.href='logs.html'">View Logs</button>
     <button type="button" onclick="openBillingModalForAdd()">Add Entry</button>
+    <button type="button" id="users-button" onclick="window.location.href='users.html'" style="display: none;">
+  Users
+</button>
   </div>
   <div class="heading-row">
   <h2>Billing Details</h2>
