@@ -151,7 +151,7 @@ let currentSortAscending = true;
 
   allBillingData = data;
 applyFilters();
-    
+  }
   
   async function logoutUser() {
     const { error } = await supabaseClient.auth.signOut();
@@ -811,7 +811,6 @@ td:first-child {
   <th><input class="filter-input" data-column="receiving_status" oninput="applyFilters()" placeholder="Filter" /></th>
   <th><input class="filter-input" data-column="remarks" oninput="applyFilters()" placeholder="Filter" /></th>
   <th></th>
-</tr>
 </tr>
     </thead>
     <tbody id="billing-table-body"></tbody>
