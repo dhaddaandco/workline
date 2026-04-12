@@ -79,9 +79,12 @@ let currentSortAscending = true;
       <td>${row.invoice_date ?? ""}</td>
       <td>${row.receiving_status ?? ""}</td>
       <td>${row.remarks ?? ""}</td>
-      <td>
+      <td class="action-cell">
   <button type="button" class="edit-icon-btn" onclick="editBillingRow(${row.id})" title="Edit">
     ✏️
+  </button>
+  <button type="button" class="delete-icon-btn" onclick="deleteBillingRow(${row.id})" title="Delete">
+    🗑️
   </button>
 </td>
     `;
@@ -377,6 +380,65 @@ function closeBillingModal() {
       console.log("Row not found:", rowId);
     }
   }, 300);
+}
+
+async function deleteBillingRow(rowId) {
+  const confirmDelete = confirm("Are you sure you want to delete this row?");
+  if (!confirmDelete) return;
+
+  const { data: userData, error: userError } = await supabaseClient.auth.getUser();
+
+  if (userError || !userData.user) {
+    alert("You must be logged in.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const loggedInUser = userData.user;
+
+  const { data: existingRow, error: fetchError } = await supabaseClient
+    .from("billing_data")
+    .select("*")
+    .eq("id", rowId)
+    .single();
+
+  if (fetchError) {
+    alert("Could not load row for deletion.");
+    console.log(fetchError);
+    return;
+  }
+
+  const { error: deleteError } = await supabaseClient
+    .from("billing_data")
+    .delete()
+    .eq("id", rowId);
+
+  if (deleteError) {
+    alert("Delete failed: " + deleteError.message);
+    console.log(deleteError);
+    return;
+  }
+
+  const { error: logError } = await supabaseClient
+    .from("audit_logs")
+    .insert([
+      {
+        user_id: loggedInUser.id,
+        user_email: loggedInUser.email,
+        action: "delete",
+        table_name: "billing_data",
+        row_id: Number(rowId),
+        old_data: existingRow,
+        new_data: null
+      }
+    ]);
+
+  if (logError) {
+    console.log("Audit log delete failed:", logError.message);
+  }
+
+  alert("Row deleted successfully");
+  loadBillingData();
 }
     
   async function addBillingEntry() {
@@ -679,6 +741,31 @@ td:first-child {
   height: 24px;
   font-size: 14px;
   padding: 0;
+}
+    .action-cell {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.delete-icon-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #bbb;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-icon-btn:hover {
+  background: #f8d7da;
 }
   </style>
 </head>
