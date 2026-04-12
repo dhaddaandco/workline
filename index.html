@@ -16,7 +16,7 @@
     let currentSortColumn = "id";
 let currentSortAscending = true;
 
-    function setSort(columnName) {
+   function setSort(columnName) {
   if (currentSortColumn === columnName) {
     currentSortAscending = !currentSortAscending;
   } else {
@@ -24,9 +24,24 @@ let currentSortAscending = true;
     currentSortAscending = true;
   }
 
+  updateSortArrows();
   loadBillingData();
 }
 
+    function updateSortArrows() {
+  document.querySelectorAll("th[data-sort]").forEach((th) => {
+    const columnName = th.getAttribute("data-sort");
+    const arrowSpan = th.querySelector(".sort-arrow");
+
+    if (!arrowSpan) return;
+
+    if (columnName === currentSortColumn) {
+      arrowSpan.textContent = currentSortAscending ? " ▲" : " ▼";
+    } else {
+      arrowSpan.textContent = " ↕";
+    }
+  });
+}
   async function loadBillingData() {
   const { data: userData, error: userError } = await supabaseClient.auth.getUser();
 
@@ -447,7 +462,11 @@ resetBillingForm();
     loadBillingData();
   }
 
-  window.onload = loadBillingData;
+window.onload = async function () {
+  await loadBillingData();
+  updateSortArrows();
+};
+    
 </script>
   <style>
     body {
@@ -687,31 +706,31 @@ td:first-child {
   <table>
     <thead>
       <tr>
-  <th onclick="setSort('id')" style="cursor:pointer;">Row ID</th>
-  <th onclick="setSort('cost_center')" style="cursor:pointer;">Cost Center</th>
-  <th onclick="setSort('person_authorised')" style="cursor:pointer;">Person Authorised</th>
-  <th onclick="setSort('voucher_type')" style="cursor:pointer;">Voucher Type</th>
-  <th onclick="setSort('income_head')" style="cursor:pointer;">Income Head</th>
-  <th onclick="setSort('group_name')" style="cursor:pointer;">Group</th>
-  <th onclick="setSort('client')" style="cursor:pointer;">Client</th>
-  <th onclick="setSort('state')" style="cursor:pointer;">State</th>
-  <th onclick="setSort('gstin')" style="cursor:pointer;">GSTIN</th>
-  <th onclick="setSort('poc_name')" style="cursor:pointer;">POC Name</th>
-  <th onclick="setSort('poc_mobile')" style="cursor:pointer;">POC Mobile</th>
-  <th onclick="setSort('poc_email')" style="cursor:pointer;">POC Email</th>
-  <th onclick="setSort('description')" style="cursor:pointer;">Description</th>
-  <th onclick="setSort('amount')" style="cursor:pointer;">Amount</th>
-  <th onclick="setSort('cgst')" style="cursor:pointer;">CGST</th>
-  <th onclick="setSort('sgst')" style="cursor:pointer;">SGST</th>
-  <th onclick="setSort('igst')" style="cursor:pointer;">IGST</th>
-  <th onclick="setSort('total')" style="cursor:pointer;">Total</th>
-  <th onclick="setSort('billing_status')" style="cursor:pointer;">Billing Status</th>
-  <th onclick="setSort('memo_no')" style="cursor:pointer;">Memo No.</th>
-  <th onclick="setSort('memo_date')" style="cursor:pointer;">Memo Date</th>
-  <th onclick="setSort('invoice_no')" style="cursor:pointer;">Invoice No.</th>
-  <th onclick="setSort('invoice_date')" style="cursor:pointer;">Invoice Date</th>
-  <th onclick="setSort('receiving_status')" style="cursor:pointer;">Receiving Status</th>
-  <th onclick="setSort('remarks')" style="cursor:pointer;">Remarks</th>
+  <th data-sort="id" onclick="setSort('id')" style="cursor:pointer;">Row ID <span class="sort-arrow"></span></th>
+  <th data-sort="cost_center" onclick="setSort('cost_center')" style="cursor:pointer;">Cost Center <span class="sort-arrow"></span></th>
+  <th data-sort="person_authorised" onclick="setSort('person_authorised')" style="cursor:pointer;">Person Authorised <span class="sort-arrow"></span></th>
+  <th data-sort="voucher_type" onclick="setSort('voucher_type')" style="cursor:pointer;">Voucher Type <span class="sort-arrow"></span></th>
+  <th data-sort="income_head" onclick="setSort('income_head')" style="cursor:pointer;">Income Head <span class="sort-arrow"></span></th>
+  <th data-sort="group_name" onclick="setSort('group_name')" style="cursor:pointer;">Group <span class="sort-arrow"></span></th>
+  <th data-sort="client" onclick="setSort('client')" style="cursor:pointer;">Client <span class="sort-arrow"></span></th>
+  <th data-sort="state" onclick="setSort('state')" style="cursor:pointer;">State <span class="sort-arrow"></span></th>
+  <th data-sort="gstin" onclick="setSort('gstin')" style="cursor:pointer;">GSTIN <span class="sort-arrow"></span></th>
+  <th data-sort="poc_name" onclick="setSort('poc_name')" style="cursor:pointer;">POC Name <span class="sort-arrow"></span></th>
+  <th data-sort="poc_mobile" onclick="setSort('poc_mobile')" style="cursor:pointer;">POC Mobile <span class="sort-arrow"></span></th>
+  <th data-sort="poc_email" onclick="setSort('poc_email')" style="cursor:pointer;">POC Email <span class="sort-arrow"></span></th>
+  <th data-sort="description" onclick="setSort('description')" style="cursor:pointer;">Description <span class="sort-arrow"></span></th>
+  <th data-sort="amount" onclick="setSort('amount')" style="cursor:pointer;">Amount <span class="sort-arrow"></span></th>
+  <th data-sort="cgst" onclick="setSort('cgst')" style="cursor:pointer;">CGST <span class="sort-arrow"></span></th>
+  <th data-sort="sgst" onclick="setSort('sgst')" style="cursor:pointer;">SGST <span class="sort-arrow"></span></th>
+  <th data-sort="igst" onclick="setSort('igst')" style="cursor:pointer;">IGST <span class="sort-arrow"></span></th>
+  <th data-sort="total" onclick="setSort('total')" style="cursor:pointer;">Total <span class="sort-arrow"></span></th>
+  <th data-sort="billing_status" onclick="setSort('billing_status')" style="cursor:pointer;">Billing Status <span class="sort-arrow"></span></th>
+  <th data-sort="memo_no" onclick="setSort('memo_no')" style="cursor:pointer;">Memo No. <span class="sort-arrow"></span></th>
+  <th data-sort="memo_date" onclick="setSort('memo_date')" style="cursor:pointer;">Memo Date <span class="sort-arrow"></span></th>
+  <th data-sort="invoice_no" onclick="setSort('invoice_no')" style="cursor:pointer;">Invoice No. <span class="sort-arrow"></span></th>
+  <th data-sort="invoice_date" onclick="setSort('invoice_date')" style="cursor:pointer;">Invoice Date <span class="sort-arrow"></span></th>
+  <th data-sort="receiving_status" onclick="setSort('receiving_status')" style="cursor:pointer;">Receiving Status <span class="sort-arrow"></span></th>
+  <th data-sort="remarks" onclick="setSort('remarks')" style="cursor:pointer;">Remarks <span class="sort-arrow"></span></th>
   <th>Actions</th>
 </tr>
     </thead>
