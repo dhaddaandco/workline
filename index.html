@@ -79,7 +79,11 @@ let currentSortAscending = true;
       <td>${row.invoice_date ?? ""}</td>
       <td>${row.receiving_status ?? ""}</td>
       <td>${row.remarks ?? ""}</td>
-      <td><button type="button" onclick="editBillingRow(${row.id})">Edit</button></td>
+      <td>
+  <button type="button" class="edit-icon-btn" onclick="editBillingRow(${row.id})" title="Edit">
+    ✏️
+  </button>
+</td>
     `;
 
     tableBody.appendChild(tr);
@@ -546,7 +550,7 @@ thead tr:nth-child(1) th {
   position: sticky;
   top: 0;
   z-index: 801;
-  height: 28px;
+  height: 22px;
   padding: 6px 10px;
   vertical-align: middle;
 }
@@ -669,6 +673,12 @@ td:first-child {
   padding: 2px 6px;
   line-height: 1.1;
   font-size: 13px;
+}
+    .edit-icon-btn {
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+  padding: 0;
 }
   </style>
 </head>
