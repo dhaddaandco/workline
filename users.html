@@ -7,6 +7,55 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script>
+    function resetUserForm() {
+  document.getElementById("editing_user_email").value = "";
+  document.getElementById("user_email").value = "";
+  document.getElementById("user_team").value = "";
+  document.getElementById("user_role").value = "member";
+  document.getElementById("user_status").value = "active";
+
+  document.getElementById("user-form-title").textContent = "Add User";
+}
+
+function openUserModalForAdd() {
+  resetUserForm();
+  document.getElementById("user-modal").style.display = "block";
+}
+    async function loadTeamsIntoUserDropdown() {
+  const { data, error } = await supabaseClient
+    .from("teams")
+    .select("id, team_name")
+    .order("team_name", { ascending: true });
+
+  if (error) {
+    console.log("Error loading teams:", error.message);
+    return;
+  }
+
+  const teamSelect = document.getElementById("user_team");
+  teamSelect.innerHTML = '<option value="">Select Team</option>';
+
+  data.forEach((team) => {
+    const option = document.createElement("option");
+    option.value = team.id;
+    option.textContent = team.team_name;
+    teamSelect.appendChild(option);
+  });
+}
+
+function openUserModalForEdit() {
+  if (!selectedUserEmail) {
+    alert("Please select a user first.");
+    return;
+  }
+
+  document.getElementById("user-form-title").textContent = "Edit User";
+  document.getElementById("user-modal").style.display = "block";
+}
+
+function closeUserModal() {
+  document.getElementById("user-modal").style.display = "none";
+}
     let selectedUserEmail = null;
 
 function selectUserRow(email, rowElement) {
@@ -95,6 +144,58 @@ function deactivateSelectedUser() {
 .selected-user-row {
   background-color: #fff3cd;
 }
+    .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 20px 0;
+}
+
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.user-form {
+  display: grid;
+  gap: 10px;
+}
+
+.user-form label {
+  font-weight: bold;
+  margin-top: 6px;
+}
+
+.user-form input,
+.user-form select {
+  padding: 10px;
+  font-size: 14px;
+}
+
+.user-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
   </style>
 </head>
 <body>
@@ -104,11 +205,44 @@ function deactivateSelectedUser() {
 
   <h2>Users</h2>
   <div class="users-actions">
-  <button type="button" onclick="openAddUserModal()">Add User</button>
-  <button type="button" id="edit-user-button" onclick="openEditUserModal()" disabled>Edit Selected</button>
-  <button type="button" id="deactivate-user-button" onclick="deactivateSelectedUser()" disabled>Deactivate Selected</button>
+  <button type="button" onclick="openUserModalForAdd()">Add User</button>
+  <button type="button" id="edit-user-button" onclick="openUserModalForEdit()" disabled>Edit Selected</button>
 </div>
+<div id="user-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close-button" onclick="closeUserModal()">&times;</span>
 
+    <h3 id="user-form-title">Add User</h3>
+
+    <div class="user-form">
+      <input type="hidden" id="editing_user_email" />
+
+      <label>Email</label>
+      <input type="email" id="user_email" placeholder="Email" />
+
+      <label>Team</label>
+      <select id="user_team"></select>
+
+      <label>Role</label>
+      <select id="user_role">
+        <option value="member">member</option>
+        <option value="partner">partner</option>
+        <option value="admin">admin</option>
+      </select>
+
+      <label>Status</label>
+      <select id="user_status">
+        <option value="active">active</option>
+        <option value="inactive">inactive</option>
+      </select>
+
+      <div class="user-form-actions">
+        <button type="button" id="user-save-button">Save</button>
+        <button type="button" onclick="closeUserModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
   <table>
     <thead>
       <tr>
@@ -203,7 +337,12 @@ function deactivateSelectedUser() {
       });
     }
 
-    loadUsersPage();
+    async function initializeUsersPage() {
+  await loadUsersPage();
+  await loadTeamsIntoUserDropdown();
+}
+
+initializeUsersPage();
   </script>
 </body>
 </html>
