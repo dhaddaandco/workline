@@ -13,6 +13,8 @@
 
      const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+    let allBillingData = [];
+
     let currentSortColumn = "id";
 let currentSortAscending = true;
 
@@ -41,6 +43,74 @@ let currentSortAscending = true;
       arrowSpan.textContent = " ↕";
     }
   });
+}
+
+    function renderBillingTable(rows) {
+  const tableBody = document.getElementById("billing-table-body");
+  tableBody.innerHTML = "";
+
+  rows.forEach((row) => {
+    const tr = document.createElement("tr");
+
+    tr.id = `billing-row-${row.id}`;
+    tr.innerHTML = `
+      <td>${row.id ?? ""}</td>
+      <td>${row.cost_center ?? ""}</td>
+      <td>${row.person_authorised ?? ""}</td>
+      <td>${row.voucher_type ?? ""}</td>
+      <td>${row.income_head ?? ""}</td>
+      <td>${row.group_name ?? ""}</td>
+      <td>${row.client ?? ""}</td>
+      <td>${row.state ?? ""}</td>
+      <td>${row.gstin ?? ""}</td>
+      <td>${row.poc_name ?? ""}</td>
+      <td>${row.poc_mobile ?? ""}</td>
+      <td>${row.poc_email ?? ""}</td>
+      <td>${row.description ?? ""}</td>
+      <td>${row.amount ?? ""}</td>
+      <td>${row.cgst ?? ""}</td>
+      <td>${row.sgst ?? ""}</td>
+      <td>${row.igst ?? ""}</td>
+      <td>${row.total ?? ""}</td>
+      <td>${row.billing_status ?? ""}</td>
+      <td>${row.memo_no ?? ""}</td>
+      <td>${row.memo_date ?? ""}</td>
+      <td>${row.invoice_no ?? ""}</td>
+      <td>${row.invoice_date ?? ""}</td>
+      <td>${row.receiving_status ?? ""}</td>
+      <td>${row.remarks ?? ""}</td>
+      <td><button type="button" onclick="editBillingRow(${row.id})">Edit</button></td>
+    `;
+
+    tableBody.appendChild(tr);
+  });
+
+  highlightRowFromUrl();
+}
+
+    function applyFilters() {
+  const filters = {};
+
+  document.querySelectorAll(".filter-input").forEach((input) => {
+    filters[input.dataset.column] = input.value.trim().toLowerCase();
+  });
+
+  const filteredRows = allBillingData.filter((row) => {
+    return Object.entries(filters).every(([column, filterValue]) => {
+      if (!filterValue) return true;
+
+      const cellValue = String(row[column] ?? "").toLowerCase();
+      return cellValue.includes(filterValue);
+    });
+  });
+
+  const subtotalAmount = filteredRows.reduce((sum, row) => {
+    return sum + (Number(row.amount) || 0);
+  }, 0);
+
+  document.getElementById("amount-subtotal").textContent = subtotalAmount;
+
+  renderBillingTable(filteredRows);
 }
   async function loadBillingData() {
   const { data: userData, error: userError } = await supabaseClient.auth.getUser();
@@ -79,15 +149,9 @@ let currentSortAscending = true;
     return;
   }
 
-  const subtotalAmount = data.reduce((sum, row) => {
-    return sum + (Number(row.amount) || 0);
-  }, 0);
-
-  document.getElementById("amount-subtotal").textContent = subtotalAmount;
-
-  const tableBody = document.getElementById("billing-table-body");
-  tableBody.innerHTML = "";
-
+  allBillingData = data;
+applyFilters();
+    
   data.forEach((row) => {
     const tr = document.createElement("tr");
     
@@ -614,6 +678,12 @@ td:first-child {
   font-size: 18px;
   font-weight: bold;
 }
+    .filter-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px;
+  font-size: 12px;
+}
   </style>
 </head>
 <body>
@@ -732,6 +802,34 @@ td:first-child {
   <th data-sort="receiving_status" onclick="setSort('receiving_status')" style="cursor:pointer;">Receiving Status <span class="sort-arrow"></span></th>
   <th data-sort="remarks" onclick="setSort('remarks')" style="cursor:pointer;">Remarks <span class="sort-arrow"></span></th>
   <th>Actions</th>
+        <tr>
+  <th><input class="filter-input" data-column="id" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="cost_center" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="person_authorised" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="voucher_type" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="income_head" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="group_name" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="client" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="state" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="gstin" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="poc_name" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="poc_mobile" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="poc_email" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="description" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="amount" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="cgst" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="sgst" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="igst" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="total" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="billing_status" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="memo_no" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="memo_date" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="invoice_no" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="invoice_date" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="receiving_status" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th><input class="filter-input" data-column="remarks" oninput="applyFilters()" placeholder="Filter" /></th>
+  <th></th>
+</tr>
 </tr>
     </thead>
     <tbody id="billing-table-body"></tbody>
