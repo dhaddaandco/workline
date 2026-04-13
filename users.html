@@ -91,6 +91,27 @@ function selectUserRow(user, rowElement) {
     return;
   }
 
+  const { data: loggedInUserData, error: loggedInUserError } = await supabaseClient.auth.getUser();
+
+  if (loggedInUserError || !loggedInUserData.user) {
+    alert("You must be logged in.");
+    return;
+  }
+
+  const loggedInUser = loggedInUserData.user;
+
+  const { data: existingRow, error: fetchError } = await supabaseClient
+    .from("app_users")
+    .select("*")
+    .eq("user_id", userId)
+    .single();
+
+  if (fetchError) {
+    alert("Could not load existing user.");
+    console.log(fetchError);
+    return;
+  }
+
   const updatedData = {
     email: document.getElementById("user_email").value,
     team_id: document.getElementById("user_team").value
@@ -100,24 +121,44 @@ function selectUserRow(user, rowElement) {
     status: document.getElementById("user_status").value
   };
 
-  const { data, error } = await supabaseClient
-  .from("app_users")
-  .update(updatedData)
-  .eq("user_id", userId)
-  .select();
+  const { data: updatedRows, error: updateError } = await supabaseClient
+    .from("app_users")
+    .update(updatedData)
+    .eq("user_id", userId)
+    .select();
 
-if (error) {
-  alert("Update failed: " + error.message);
-  console.log(error);
-  return;
-}
+  if (updateError) {
+    alert("Update failed: " + updateError.message);
+    console.log(updateError);
+    return;
+  }
 
-if (!data || data.length === 0) {
-  alert("No row was updated. Most likely the update policy is blocking it.");
-  return;
-}
+  if (!updatedRows || updatedRows.length === 0) {
+    alert("No row was updated.");
+    return;
+  }
 
-alert("User updated successfully");
+  const updatedRow = updatedRows[0];
+
+  const { error: logError } = await supabaseClient
+    .from("audit_logs")
+    .insert([
+      {
+        user_id: loggedInUser.id,
+        user_email: updatedRow.email,
+        action: "update",
+        table_name: "app_users",
+        row_id: userId,
+        old_data: existingRow,
+        new_data: updatedRow
+      }
+    ]);
+
+  if (logError) {
+    console.log("Audit log update failed:", logError.message);
+  }
+
+  alert("User updated successfully");
   closeUserModal();
 
   selectedUserEmail = null;
