@@ -104,18 +104,24 @@ function selectUserRow(user, rowElement) {
     status: document.getElementById("user_status").value
   };
 
-  const { error } = await supabaseClient
-    .from("app_users")
-    .update(updatedData)
-    .eq("user_id", userId);
+  const { data, error } = await supabaseClient
+  .from("app_users")
+  .update(updatedData)
+  .eq("user_id", userId)
+  .select();
 
-  if (error) {
-    alert("Update failed: " + error.message);
-    console.log(error);
-    return;
-  }
+if (error) {
+  alert("Update failed: " + error.message);
+  console.log(error);
+  return;
+}
 
-  alert("User updated successfully");
+if (!data || data.length === 0) {
+  alert("No row was updated. Most likely the update policy is blocking it.");
+  return;
+}
+
+alert("User updated successfully");
   closeUserModal();
 
   selectedUserEmail = null;
