@@ -80,27 +80,6 @@ function selectUserRow(user, rowElement) {
 
   document.getElementById("edit-user-button").disabled = false;
 }
-function openAddUserModal() {
-  alert("Next step: Add User modal");
-}
-
-function openEditUserModal() {
-  if (!selectedUserEmail) {
-    alert("Please select a user first.");
-    return;
-  }
-
-  alert("Next step: Edit user " + selectedUserEmail);
-}
-
-function deactivateSelectedUser() {
-  if (!selectedUserEmail) {
-    alert("Please select a user first.");
-    return;
-  }
-
-  alert("Next step: Deactivate user " + selectedUserEmail);
-}
     function saveUser() {
   const editingUserId = document.getElementById("editing_user_id").value;
 
