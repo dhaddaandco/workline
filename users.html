@@ -141,19 +141,18 @@ function selectUserRow(user, rowElement) {
   const updatedRow = updatedRows[0];
 
   const { error: logError } = await supabaseClient
-    .from("audit_logs")
-    .insert([
-      {
-        user_id: loggedInUser.id,
-        user_email: updatedRow.email,
-        action: "update",
-        table_name: "app_users",
-        row_id: userId,
-        old_data: existingRow,
-        new_data: updatedRow
-      }
-    ]);
-
+  .from("audit_logs")
+  .insert([
+    {
+      user_id: loggedInUser.id,
+      user_email: updatedRow.email,
+      action: "update",
+      table_name: "app_users",
+      row_id: updatedRow.id,
+      old_data: existingRow,
+      new_data: updatedRow
+    }
+  ]);
   if (logError) {
     console.log("Audit log update failed:", logError.message);
   }
