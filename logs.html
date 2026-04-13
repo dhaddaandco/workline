@@ -94,7 +94,7 @@
 
         tr.innerHTML = `
   <td><a href="index.html?row_id=${row.row_id}">${row.row_id ?? ""}</a></td>
-  <td>${row.user_email ?? row.user_id ?? ""}</td>
+  <td>${getDisplayEmail(row)}</td>
   <td>${row.action ?? ""}</td>
   <td>${formatChanges(row.old_data, row.new_data, row.action)}</td>
   <td>${row.created_at ?? ""}</td>
@@ -102,6 +102,15 @@
         tableBody.appendChild(tr);
       });
     }
+
+    function getDisplayEmail(row) {
+  if (row.table_name === "app_users") {
+    if (row.new_data && row.new_data.email) return row.new_data.email;
+    if (row.old_data && row.old_data.email) return row.old_data.email;
+  }
+
+  return row.user_email ?? row.user_id ?? "";
+}
   function formatChanges(oldData, newData, action) {
   if (action === "insert") {
     return "New row created";
