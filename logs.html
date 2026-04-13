@@ -82,8 +82,7 @@
         .order("id", { ascending: false });
       const { data: appUsersData, error: appUsersError } = await supabaseClient
   .from("app_users")
-  .select("id, email");
-
+  .select("user_id, email");
 if (appUsersError) {
   console.log("Error loading app_users:", appUsersError.message);
   return;
@@ -91,9 +90,8 @@ if (appUsersError) {
 
 const appUsersEmailMap = {};
 appUsersData.forEach((user) => {
-  appUsersEmailMap[user.id] = user.email;
+  appUsersEmailMap[user.user_id] = user.email;
 });
-
       if (error) {
         console.log("Error loading logs:", error.message);
         return;
@@ -117,10 +115,10 @@ appUsersData.forEach((user) => {
     }
 
     function getDisplayEmail(row, appUsersEmailMap) {
-  if (row.table_name === "app_users") {
-    const currentEmail = appUsersEmailMap[row.row_id];
-    if (currentEmail) return currentEmail;
+  const currentEmail = appUsersEmailMap[row.user_id];
+  if (currentEmail) return currentEmail;
 
+  if (row.table_name === "app_users") {
     if (row.new_data && row.new_data.email) return row.new_data.email;
     if (row.old_data && row.old_data.email) return row.old_data.email;
   }
