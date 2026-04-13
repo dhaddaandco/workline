@@ -18,14 +18,9 @@ let selectedUserId = null;
   document.getElementById("user_role").value = "member";
   document.getElementById("user_status").value = "active";
 
-  document.getElementById("user-form-title").textContent = "Add User";
+  document.getElementById("user-form-title").textContent = "Edit User";
 }
 
-function openUserModalForAdd() {
-  resetUserForm();
- 
-  document.getElementById("user-modal").style.display = "block";
-}
     async function loadTeamsIntoUserDropdown() {
   const { data, error } = await supabaseClient
     .from("teams")
@@ -80,14 +75,15 @@ function selectUserRow(user, rowElement) {
 
   document.getElementById("edit-user-button").disabled = false;
 }
-    function saveUser() {
+  function saveUser() {
   const editingUserId = document.getElementById("editing_user_id").value;
 
-  if (editingUserId) {
-    updateExistingUser(editingUserId);
-  } else {
-    alert("Add User save will be connected next through a secure backend / Edge Function.");
+  if (!editingUserId) {
+    alert("Please select a user first.");
+    return;
   }
+
+  updateExistingUser(editingUserId);
 }
  async function updateExistingUser(userId) {
   if (!userId) {
@@ -244,14 +240,13 @@ alert("User updated successfully");
 
   <h2>Users</h2>
   <div class="users-actions">
-  <button type="button" onclick="openUserModalForAdd()">Add User</button>
   <button type="button" id="edit-user-button" onclick="openUserModalForEdit()" disabled>Edit Selected</button>
 </div>
 <div id="user-modal" class="modal" style="display: none;">
   <div class="modal-content">
     <span class="close-button" onclick="closeUserModal()">&times;</span>
 
-    <h3 id="user-form-title">Add User</h3>
+    <h3 id="user-form-title">Edit User</h3>
 
     <div class="user-form">
       <input type="hidden" id="editing_user_id" />
